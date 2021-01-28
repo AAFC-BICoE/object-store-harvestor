@@ -10,11 +10,15 @@ One Paragraph of project description goes here
 * TODO High level design (may be goes to a design folder)
 
 - [Object Store Harvestor](#object-store-harvestor)
+  - [Docs](#docs)
   - [Contents](#contents)
   - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
   - [Local development](#local-development)
   - [Running the tests](#running-the-tests)
+
+## Docs
+  - [Design](doc/design.md)
 
 ## Getting Started
 
