@@ -1,8 +1,8 @@
 # Design object-store-harvestor
 
-Please refer to the diagram : design-diagram-v0.01.pdf in the same folder
+Please refer to this [diagram](design-diagram-v0.01.pdf)
 
-There 2 major blocks:
+There are 2 major blocks:
   - Local computer running on Windows or Linux where the application will walk through all media files
   - Public Internet where the Object Store API accept http requests from object-store-harvester
 
