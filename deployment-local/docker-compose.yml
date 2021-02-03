@@ -1,0 +1,12 @@
+version: '3.7'
+
+services:
+  aafc-bicoe-object-store-harvestor-local:
+    container_name: aafc-bicoe-object-store-harvestor-local
+    image: aafc-bicoe/object-store-harvestor-local:latest
+    environment:
+      - APP_MODE=debug
+      - RELEASE_VERSION=0.01
+    volumes:
+      - '../data-test:/tmp/data-test'
+
