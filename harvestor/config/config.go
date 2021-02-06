@@ -59,7 +59,7 @@ func ReadFromFile(filename string) (Configuration, error) {
 		return conf, err
 	}
 
-	// Unmarshal to prefined struct
+	// Unmarshal to predefined struct
 	err = v.Unmarshal(&conf)
 	if err != nil {
 		return conf, err
