@@ -1,6 +1,6 @@
 # Design object-store-harvestor
 
-Please refer to this [diagram](design-diagram-v0.01.pdf)
+Please refer to this [diagram](design-diagram-v0.02.pdf)
 
 There are 2 major blocks:
   - Local computer running on Windows or Linux where the application will walk through all media files
