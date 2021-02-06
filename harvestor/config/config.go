@@ -8,15 +8,14 @@ import (
 	"fmt"
 	"github.com/spf13/viper"
 	"log"
-	"os"
 	"path/filepath"
 	"strings"
 )
 
-// Media File walker + SQLite DB configs
 type Configuration struct {
-	Walker   FileWalkerConfiguration
-	Database DatabaseConfiguration
+	Database   DatabaseConfiguration   // SQLite DB config
+	Walker     FileWalkerConfiguration // Media File walker config
+	HttpClient HttpClientConfiguration // Http Client config
 }
 
 // Validation helpers
@@ -26,30 +25,36 @@ var (
 )
 
 func ReadFromFile(filename string) (Configuration, error) {
-	// init Configuration
+
+	// define empty configuration
 	var conf Configuration
+
 	// get path and file
 	path, file := filepath.Split(filename)
-	// validation on valid cpnfiguration
+
+	// validation on supported extention
 	if !isValidConfigFile(file) {
 		err := fmt.Errorf("config file:(%q) is not supported with extention:(%q)", file, getFileExtension(file))
 		return conf, err
 	}
 
-	confName := getFileName(file)
-	confExt := getFileExtension(file)
+	// define file name
+	name := getFileName(file)
+	// define file extension
+	extension := getFileExtension(file)
 	// Debug for now
 	log.Println("----------------------------------------")
-	log.Println("||| path :", path)
-	log.Println("||| confName :", confName)
-	log.Println("||| confExt :", confExt)
+	log.Println("||| config file path :", path)
+	log.Println("||| config file name :", name)
+	log.Println("||| config file extension :", extension)
 	log.Println("----------------------------------------")
 
-	// passing file to viper
+	// init new viper
 	v := viper.New()
-	v.SetConfigName(confName) // config file name without extension
-	v.SetConfigType(confExt)  // config file extension
-	v.AddConfigPath(path)     // config file path
+	// passing file to viper
+	v.SetConfigName(name)      // config file name without extension
+	v.SetConfigType(extension) // config file extension
+	v.AddConfigPath(path)      // config file path
 	// in case we have .env
 	v.AutomaticEnv() // read value ENV variable
 
@@ -67,15 +72,6 @@ func ReadFromFile(filename string) (Configuration, error) {
 
 	// returning Configuration
 	return conf, nil
-}
-
-// check if the config file exist
-func isFileExists(filename string) bool {
-	info, err := os.Stat(filename)
-	if os.IsNotExist(err) {
-		return false
-	}
-	return !info.IsDir()
 }
 
 // check if the config type supported

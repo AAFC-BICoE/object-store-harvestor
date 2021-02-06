@@ -18,6 +18,9 @@ func main() {
 	// Debug Log
 	log.Println("INFO ||| conf.Database.DbName :", conf.Database.DbName)
 	log.Println("INFO ||| conf.Walker.EntryPoint :", conf.Walker.EntryPoint)
+	log.Println("INFO ||| conf.HttpClient.ApiUrl :", conf.HttpClient.ApiUrl)
+	log.Println("INFO ||| conf.HttpClient.ObjectSource :", conf.HttpClient.ObjectSource)
+	log.Println("INFO ||| conf.HttpClient.TimeOut :", conf.HttpClient.TimeOut)
 }
 
 // helper function to read args
@@ -25,7 +28,7 @@ func getFileName() string {
 	args := os.Args
 	if len(os.Args) < 1 {
 		example := "(example : /app/harvestor_config.yml)"
-		err := "Application requires an argument to the config file, none has been provided ||| " + example
+		err := "Application requires an argument as a string to a config file, none has been provided ||| " + example
 		log.Fatal(err)
 	}
 	log.Println("args :", args)

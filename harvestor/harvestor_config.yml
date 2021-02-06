@@ -4,3 +4,8 @@ database:
 
 walker:
   entryPoint: "/tmp/data-test"
+
+httpclient:
+  timeout: 300
+  apiurl: "http://localhost:8080/api/v1/"
+  objectsource: "object" 
