@@ -29,15 +29,16 @@ RUN apk update
 RUN adduser -S -D -H -h /app appuser
 USER appuser
 COPY --from=builder /go/main /app/
+COPY --from=builder /go/src/harvestor/harvestor_config.yml /app/
 COPY --from=builder /tmp/coverage.out /tmp/
 WORKDIR /app
 RUN mkdir /tmp/data-test
 
 # Release
-ARG RELEASE_VERSION="0.001"
+ARG ARG_RELEASE_VERSION="0.001"
 ENV RELEASE_VERSION "${ARG_RELEASE_VERSION}"
 
 ARG ARG_DEPLOYMENT_ENV="Local"
 ENV DEPLOYMENT_ENV "${ARG_DEPLOYMENT_ENV}"
 
-CMD ["./main"]
+CMD ["./main", "/app/harvestor_config.yml"]
