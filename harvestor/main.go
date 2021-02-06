@@ -5,34 +5,38 @@ package main
 
 import (
 	"harvestor/config"
-	"log"
+	l "harvestor/logger"
 	"os"
 )
 
 func main() {
+	var logger = l.NewLogger()
+
 	filename := getFileName()
 	conf, err := config.ReadFromFile(filename)
 	if err != nil {
-		log.Fatal(err)
+		logger.Error(err)
 	}
 	// Debug Log
-	log.Println("INFO ||| conf.Database.DbName :", conf.Database.DbName)
-	log.Println("INFO ||| conf.Walker.EntryPoint :", conf.Walker.EntryPoint)
-	log.Println("INFO ||| conf.HttpClient.ApiUrl :", conf.HttpClient.ApiUrl)
-	log.Println("INFO ||| conf.HttpClient.ObjectSource :", conf.HttpClient.ObjectSource)
-	log.Println("INFO ||| conf.HttpClient.TimeOut :", conf.HttpClient.TimeOut)
+	logger.Debug("conf.Database.DbName :", conf.Database.DbName)
+	logger.Debug("conf.Walker.EntryPoint :", conf.Walker.EntryPoint)
+	logger.Debug("conf.HttpClient.ApiUrl :", conf.HttpClient.ApiUrl)
+	logger.Debug("conf.HttpClient.ObjectSource :", conf.HttpClient.ObjectSource)
+	logger.Debug("conf.HttpClient.TimeOut :", conf.HttpClient.TimeOut)
 }
 
 // helper function to read args
 func getFileName() string {
+	var logger = l.NewLogger()
+
 	args := os.Args
 	if len(os.Args) < 1 {
 		example := "(example : /app/harvestor_config.yml)"
 		err := "Application requires an argument as a string to a config file, none has been provided ||| " + example
-		log.Fatal(err)
+		logger.Error(err)
 	}
-	log.Println("args :", args)
+	logger.Debug("args :", args)
 	filename := args[1]
-	log.Println("filename :", filename)
+	logger.Debug("filename :", filename)
 	return filename
 }

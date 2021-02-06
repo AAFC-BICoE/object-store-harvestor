@@ -7,7 +7,7 @@ package config
 import (
 	"fmt"
 	"github.com/spf13/viper"
-	"log"
+	l "harvestor/logger"
 	"path/filepath"
 	"strings"
 )
@@ -25,6 +25,7 @@ var (
 )
 
 func ReadFromFile(filename string) (Configuration, error) {
+	var logger = l.NewLogger()
 
 	// define empty configuration
 	var conf Configuration
@@ -43,11 +44,11 @@ func ReadFromFile(filename string) (Configuration, error) {
 	// define file extension
 	extension := getFileExtension(file)
 	// Debug for now
-	log.Println("----------------------------------------")
-	log.Println("||| config file path :", path)
-	log.Println("||| config file name :", name)
-	log.Println("||| config file extension :", extension)
-	log.Println("----------------------------------------")
+	logger.Debug("----------------------------------------")
+	logger.Debug("||| config file path :", path)
+	logger.Debug("||| config file name :", name)
+	logger.Debug("||| config file extension :", extension)
+	logger.Debug("----------------------------------------")
 
 	// init new viper
 	v := viper.New()
