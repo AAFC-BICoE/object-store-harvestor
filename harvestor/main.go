@@ -10,19 +10,21 @@ import (
 )
 
 func main() {
+
+	// Getting our Configuration
+	filename := getFileName()
+	config.Load(filename)
+	// Create new logger
 	var logger = l.NewLogger()
 
-	filename := getFileName()
-	conf, err := config.ReadFromFile(filename)
-	if err != nil {
-		logger.Error(err)
-	}
 	// Debug Log
-	logger.Debug("conf.Database.DbName :", conf.Database.DbName)
-	logger.Debug("conf.Walker.EntryPoint :", conf.Walker.EntryPoint)
-	logger.Debug("conf.HttpClient.ApiUrl :", conf.HttpClient.ApiUrl)
-	logger.Debug("conf.HttpClient.ObjectSource :", conf.HttpClient.ObjectSource)
-	logger.Debug("conf.HttpClient.TimeOut :", conf.HttpClient.TimeOut)
+	conf := config.GetConf()
+	logger.Debug("conf.Database.DbName : ", conf.Database.DbName)
+	logger.Debug("conf.Walker.EntryPoint : ", conf.Walker.EntryPoint)
+	logger.Debug("conf.HttpClient.ApiUrl : ", conf.HttpClient.ApiUrl)
+	logger.Debug("conf.HttpClient.ObjectSource : ", conf.HttpClient.ObjectSource)
+	logger.Debug("conf.HttpClient.TimeOut : ", conf.HttpClient.TimeOut)
+	logger.Debug("conf.Loger.Level : ", conf.Logger.Level)
 }
 
 // helper function to read args

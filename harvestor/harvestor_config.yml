@@ -9,3 +9,12 @@ httpclient:
   timeout: 300
   apiurl: "http://localhost:8080/api/v1/"
   objectsource: "object" 
+
+logger:
+  level: "Debug"
+  path: "/var/logs/AAFC"
+  file: "harvestor.log"
+
+app:
+  release: "0.01"
+  env: "dev"

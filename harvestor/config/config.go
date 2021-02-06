@@ -7,7 +7,7 @@ package config
 import (
 	"fmt"
 	"github.com/spf13/viper"
-	l "harvestor/logger"
+	"log"
 	"path/filepath"
 	"strings"
 )
@@ -16,6 +16,7 @@ type Configuration struct {
 	Database   DatabaseConfiguration   // SQLite DB config
 	Walker     FileWalkerConfiguration // Media File walker config
 	HttpClient HttpClientConfiguration // Http Client config
+	Logger     LoggerConfiguration     // Logger config
 }
 
 // Validation helpers
@@ -24,19 +25,39 @@ var (
 	validConfigFileExtensionsMap map[string]bool = make(map[string]bool)
 )
 
-func ReadFromFile(filename string) (Configuration, error) {
-	var logger = l.NewLogger()
+// define global empty configuration
+var conf Configuration
 
-	// define empty configuration
-	var conf Configuration
+func Load(filename string) {
+	err := readFromFile(filename)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
 
+func Reload(filename string) {
+	err := readFromFile(filename)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func GetConf() Configuration {
+	return conf
+}
+
+func GetLoggerLevel() string {
+	return strings.ToLower(conf.Logger.Level)
+}
+
+func readFromFile(filename string) error {
 	// get path and file
 	path, file := filepath.Split(filename)
 
 	// validation on supported extention
 	if !isValidConfigFile(file) {
 		err := fmt.Errorf("config file:(%q) is not supported with extention:(%q)", file, getFileExtension(file))
-		return conf, err
+		return err
 	}
 
 	// define file name
@@ -44,11 +65,11 @@ func ReadFromFile(filename string) (Configuration, error) {
 	// define file extension
 	extension := getFileExtension(file)
 	// Debug for now
-	logger.Debug("----------------------------------------")
-	logger.Debug("||| config file path :", path)
-	logger.Debug("||| config file name :", name)
-	logger.Debug("||| config file extension :", extension)
-	logger.Debug("----------------------------------------")
+	log.Println("---------------------- C o n f i g ----------------------------")
+	log.Println("||| config file path :", path)
+	log.Println("||| config file name :", name)
+	log.Println("||| config file extension :", extension)
+	log.Println("---------------------------------------------------------------")
 
 	// init new viper
 	v := viper.New()
@@ -62,17 +83,17 @@ func ReadFromFile(filename string) (Configuration, error) {
 	// Reading from yml file
 	err := v.ReadInConfig()
 	if err != nil {
-		return conf, err
+		return err
 	}
 
 	// Unmarshal to predefined struct
 	err = v.Unmarshal(&conf)
 	if err != nil {
-		return conf, err
+		return err
 	}
 
 	// returning Configuration
-	return conf, nil
+	return nil
 }
 
 // check if the config type supported
