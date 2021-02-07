@@ -7,6 +7,7 @@ import (
 	"harvestor/config"
 	l "harvestor/logger"
 	"os"
+	_ "time"
 )
 
 func main() {
@@ -28,6 +29,10 @@ func main() {
 	logger.Debug("conf.App.Release : ", conf.App.Release)
 	logger.Debug("conf.App.Env : ", conf.App.Env)
 	logger.Debug("conf.Loger.Level : ", conf.Logger.Level)
+
+	// If you need to ssh to the container before exit
+	// Uncomment the following line (it will be up for 3 min)
+	// time.Sleep(180 * time.Second) // sleep for 3 min before exiting
 }
 
 // helper function to read args
