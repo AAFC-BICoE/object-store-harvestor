@@ -1,6 +1,5 @@
 database:
   dbName: "harvestor.db"
-  release: "0.01"
 
 walker:
   entryPoint: "/tmp/data-test"
@@ -17,4 +16,5 @@ logger:
 
 app:
   release: "0.01"
+  name: "harvestor"
   env: "dev"

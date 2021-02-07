@@ -1,3 +1,9 @@
+// This is out of the box common logger from logrus
+// All logs will be stored as JSON for better searching
+// TODO Need to check later on if this app needs
+// error handling common interfaces or it's an over kill
+// For now just keeping it simple
+
 package logger
 
 import (
@@ -6,18 +12,13 @@ import (
 	"os"
 )
 
-// Event stores messages to log later, from our standard interface
-type Event struct {
-	id      int
-	message string
-}
-
 // StandardLogger enforces specific log message formats
 type StandardLogger struct {
 	*logrus.Logger
 }
 
-var loglevels = map[string]logrus.Level{
+// Map log level from config
+var Levels = map[string]logrus.Level{
 	"info":  logrus.InfoLevel,
 	"debug": logrus.DebugLevel,
 	"trace": logrus.TraceLevel,
@@ -29,20 +30,24 @@ var loglevels = map[string]logrus.Level{
 
 // NewLogger initializes the standard logger
 func NewLogger() *StandardLogger {
+	// new base logrus
 	var baseLogger = logrus.New()
-
+	// introducing our standard logger from base logrus logger
 	var standardLogger = &StandardLogger{baseLogger}
-
+	// define log formatter as JSON
 	standardLogger.Formatter = &logrus.JSONFormatter{}
-
-	level := config.GetLoggerLevel()
-	loglevel, ok := loglevels[level]
+	// getting log level from our config
+	l := config.GetLoggerLevel()
+	// if level is set correctly then setting ...
+	level, ok := Levels[l]
 	if ok {
-		standardLogger.SetLevel(loglevel)
+		standardLogger.SetLevel(level)
 	} else {
+		// fallback in case of an error to Info
 		standardLogger.SetLevel(logrus.InfoLevel)
 	}
 
+	// Define Output for logs
 	standardLogger.SetOutput(os.Stdout)
 
 	// TODO Logging to file

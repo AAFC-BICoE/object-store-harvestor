@@ -2,6 +2,10 @@
 // send each file of our interest to to object-store-api and map it back to the metadata
 // For more information please refer to https://github.com/AAFC-BICoE/object-store-harvestor/blob/dev/doc/design.md
 
+// TODO For now we do not modify config while the app is running
+// viper has OnConfigChange event which we can trigger to reload our config during the app run
+// Do not see yet this case. May be later on with UI for the user
+
 package config
 
 import (
@@ -17,6 +21,7 @@ type Configuration struct {
 	Walker     FileWalkerConfiguration // Media File walker config
 	HttpClient HttpClientConfiguration // Http Client config
 	Logger     LoggerConfiguration     // Logger config
+	App        AppConfiguration        // App config
 }
 
 // Validation helpers
@@ -29,13 +34,6 @@ var (
 var conf Configuration
 
 func Load(filename string) {
-	err := readFromFile(filename)
-	if err != nil {
-		log.Fatal(err)
-	}
-}
-
-func Reload(filename string) {
 	err := readFromFile(filename)
 	if err != nil {
 		log.Fatal(err)
@@ -74,11 +72,15 @@ func readFromFile(filename string) error {
 	// init new viper
 	v := viper.New()
 	// passing file to viper
-	v.SetConfigName(name)      // config file name without extension
-	v.SetConfigType(extension) // config file extension
-	v.AddConfigPath(path)      // config file path
+	// config file name without extension
+	v.SetConfigName(name)
+	// config file extension
+	v.SetConfigType(extension)
+	// config file path
+	v.AddConfigPath(path)
 	// in case we have .env
-	v.AutomaticEnv() // read value ENV variable
+	// read value ENV variable
+	v.AutomaticEnv()
 
 	// Reading from yml file
 	err := v.ReadInConfig()

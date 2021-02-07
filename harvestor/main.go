@@ -24,6 +24,9 @@ func main() {
 	logger.Debug("conf.HttpClient.ApiUrl : ", conf.HttpClient.ApiUrl)
 	logger.Debug("conf.HttpClient.ObjectSource : ", conf.HttpClient.ObjectSource)
 	logger.Debug("conf.HttpClient.TimeOut : ", conf.HttpClient.TimeOut)
+	logger.Debug("conf.App.Name : ", conf.App.Name)
+	logger.Debug("conf.App.Release : ", conf.App.Release)
+	logger.Debug("conf.App.Env : ", conf.App.Env)
 	logger.Debug("conf.Loger.Level : ", conf.Logger.Level)
 }
 
