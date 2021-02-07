@@ -34,22 +34,16 @@ Give examples
 
 ### Local development
 
-A step by step series of examples that tell you how to get a development env running
-
-Say what the step will be
-
+- Clone the repo object-store-harvestor
+- cd to repo object-store-harvestor
+- run the following command to start a docker container :
 ```
-Give the example
+deployment-local/run_docker_containers.sh
 ```
-
-And repeat
-
+- check the logs of the aafc-bicoe-object-store-harvestor-local conatner logs for results
 ```
-until finished
+docker logs aafc-bicoe-object-store-harvestor-local
 ```
-
-End with an example of getting some data out of the system or using it for a little demo
-
 ## Running the tests
 
 Explain how to run the automated tests for this system
