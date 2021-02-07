@@ -20,13 +20,36 @@ func TestStructConfiguration(t *testing.T) {
 func TestConfigYmlExtention(t *testing.T) {
 	file := "/go/src/harvestor/harvestor_config.yml"
 	want := true
+
 	assert.Equal(t, want, isValidConfigFile(file))
 }
 
 func TestConfigJsonExtention(t *testing.T) {
 	file := "/go/src/harvestor/harvestor_config.json"
 	want := false
+
 	assert.Equal(t, want, isValidConfigFile(file))
+}
+
+func TestDefaultYmlExistingConfiguration(t *testing.T) {
+	file := "/go/src/harvestor/harvestor_config.yml"
+	e := readFromFile(file)
+
+	assert.Nil(t, e)
+}
+
+func TestDefaultJsonExistingConfiguration(t *testing.T) {
+	file := "/go/src/harvestor/harvestor_config.json"
+	e := readFromFile(file)
+
+	assert.NotNil(t, e)
+}
+
+func TestDefaultNotExistingConfiguration(t *testing.T) {
+	file := "/go/src/harvestor/not_existing_harvestor_config.yml"
+	e := readFromFile(file)
+
+	assert.NotNil(t, e)
 }
 
 func TestDefaultConfiguration(t *testing.T) {
@@ -39,6 +62,7 @@ func TestDefaultConfiguration(t *testing.T) {
 	fHttpClient := HttpClientConfiguration{300, "http://localhost:8080/api/v1/", "object"}
 	fLogger := LoggerConfiguration{"Debug", "/var/logs/AAFC", "harvestor.log"}
 	fAppConfiguration := AppConfiguration{"0.01", "harvestor", "dev"}
+
 	assert.Equal(t, want, reflect.DeepEqual(fd.Database, fDatabase))
 	assert.Equal(t, want, reflect.DeepEqual(fd.Walker, fWalker))
 	assert.Equal(t, want, reflect.DeepEqual(fd.HttpClient, fHttpClient))
@@ -50,6 +74,7 @@ func TestDefaultLoggerLevel(t *testing.T) {
 	file := "/go/src/harvestor/harvestor_config.yml"
 	Load(file)
 	want := "debug"
+
 	assert.Equal(t, want, GetLoggerLevel())
 }
 
@@ -57,6 +82,7 @@ func TestDefaultFileExtension(t *testing.T) {
 	filename := "/go/src/harvestor/harvestor_config.yml"
 	_, file := filepath.Split(filename)
 	want := "yml"
+
 	assert.Equal(t, want, getFileExtension(file))
 }
 
@@ -64,5 +90,6 @@ func TestDefaultFileName(t *testing.T) {
 	filename := "/go/src/harvestor/harvestor_config.yml"
 	_, file := filepath.Split(filename)
 	want := "harvestor_config"
+
 	assert.Equal(t, want, getFileName(file))
 }
