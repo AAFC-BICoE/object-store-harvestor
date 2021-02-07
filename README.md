@@ -37,7 +37,7 @@ These instructions will get you a copy of the project up and running on your loc
 ```
 deployment-local/run_docker_containers.sh
 ```
-- check the logs of the aafc-bicoe-object-store-harvestor-local conatner logs for results
+- check the logs of the aafc-bicoe-object-store-harvestor-local conatner for results
 ```
 docker logs aafc-bicoe-object-store-harvestor-local
 ```
