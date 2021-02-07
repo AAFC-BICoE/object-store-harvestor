@@ -26,15 +26,12 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-What things you need to install the software and how to install them
-
-```
-Give examples
-```
+- Install [Docker](https://docs.docker.com/get-docker/)
+- Install [docker-compose](https://docs.docker.com/compose/)
 
 ### Local development
 
-- Clone the repo object-store-harvestor
+- Clone the repo: object-store-harvestor
 - cd to repo object-store-harvestor
 - run the following command to start a docker container :
 ```
