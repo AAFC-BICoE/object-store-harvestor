@@ -25,10 +25,7 @@ type Configuration struct {
 }
 
 // Validation helpers
-var (
-	ValidConfigFileExtensions                    = []string{"yml"}
-	validConfigFileExtensionsMap map[string]bool = make(map[string]bool)
-)
+var ValidConfigFileExtension = "yml"
 
 // define global empty configuration
 var conf Configuration
@@ -100,12 +97,7 @@ func readFromFile(filename string) error {
 
 // check if the config type supported
 func isValidConfigFile(file string) bool {
-	for _, ext := range ValidConfigFileExtensions {
-		validConfigFileExtensionsMap[ext] = true
-	}
-
-	ext := getFileExtension(file)
-	return validConfigFileExtensionsMap[ext]
+	return getFileExtension(file) == ValidConfigFileExtension
 }
 
 // get file extension
