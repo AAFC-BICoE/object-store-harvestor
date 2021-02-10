@@ -57,25 +57,26 @@ func TestDefaultConfiguration(t *testing.T) {
 	Load(file)
 	fd := GetConf()
 	want := true
-	fDatabase := DatabaseConfiguration{"harvestor.db"}
-	fWalker := FileWalkerConfiguration{"/tmp/data-test"}
-	fHttpClient := HttpClientConfiguration{300, "http://localhost:8080/api/v1/", "object"}
-	fLogger := LoggerConfiguration{"Debug", "/var/logs/AAFC", "harvestor.log"}
-	fAppConfiguration := AppConfiguration{"0.01", "harvestor", "dev"}
+	fDatabase := &DatabaseConfiguration{2, 2, 30, "/tmp/data-test/harvestor.db"}
+	fWalker := &FileWalkerConfiguration{"/tmp/data-test"}
+	fHttpClient := &HttpClientConfiguration{300, "http://localhost:8080", "/api/v1/object"}
+	fLogger := &LoggerConfiguration{"Debug", "/var/logs/AAFC", "harvestor.log"}
+	fAppConfiguration := &AppConfiguration{"0.01", "harvestor", "dev"}
 
-	assert.Equal(t, want, reflect.DeepEqual(fd.Database, fDatabase))
-	assert.Equal(t, want, reflect.DeepEqual(fd.Walker, fWalker))
-	assert.Equal(t, want, reflect.DeepEqual(fd.HttpClient, fHttpClient))
-	assert.Equal(t, want, reflect.DeepEqual(fd.Logger, fLogger))
-	assert.Equal(t, want, reflect.DeepEqual(fd.App, fAppConfiguration))
+	assert.Equal(t, want, reflect.DeepEqual(fd.Database, *fDatabase))
+	assert.Equal(t, want, reflect.DeepEqual(fd.Walker, *fWalker))
+	assert.Equal(t, want, reflect.DeepEqual(fd.HttpClient, *fHttpClient))
+	assert.Equal(t, want, reflect.DeepEqual(fd.Logger, *fLogger))
+	assert.Equal(t, want, reflect.DeepEqual(fd.App, *fAppConfiguration))
 }
 
 func TestDefaultLoggerLevel(t *testing.T) {
 	file := "/go/src/harvestor/harvestor_config.yml"
 	Load(file)
+	conf := GetConf()
+	l := conf.Logger.GetLevel()
 	want := "debug"
-
-	assert.Equal(t, want, GetLoggerLevel())
+	assert.Equal(t, want, l)
 }
 
 func TestDefaultFileExtension(t *testing.T) {

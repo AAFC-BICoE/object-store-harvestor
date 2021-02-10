@@ -1,13 +1,24 @@
 database:
-  dbName: "harvestor.db"
+  # Number of max Open connections to SQLite DB
+  maxOpenConns: 2
+  # Number of max Idle connections to SQLite DB
+  maxIdleConns: 2 
+  # Number of minutes connection will live
+  connMaxLifetime: 30
+  # Path to SQLite DB
+  dbFile: "/tmp/data-test/harvestor.db"
 
 walker:
-  entryPoint: "/tmp/data-test"
+  # File walker root path for media files
+  EntryPointPath: "/tmp/data-test"
 
 httpclient:
-  timeout: 300
-  apiurl: "http://localhost:8080/api/v1/"
-  objectsource: "object" 
+  # Number of max Open connections to SQLite DB
+  timeOut: 300
+  # Number of max Open connections to SQLite DB
+  baseApiUrl: "http://localhost:8080"
+  # Number of max Open connections to SQLite DB
+  uri: "/api/v1/object" 
 
 logger:
   level: "Debug"

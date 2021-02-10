@@ -1,7 +1,7 @@
 # - - - BUILD - - - #
 FROM golang:alpine as builder
 # Install alpine dependencies
-RUN apk add --update --no-cache git
+RUN apk add --update --no-cache git build-base
 # updates
 RUN apk update
 # Preps
@@ -30,6 +30,7 @@ RUN go build -o main /go/src/harvestor
 # - - - LOCAL - - - #
 # Pushing Artifact to local
 FROM alpine
+RUN apk add --update --no-cache sqlite
 RUN apk update
 RUN adduser -S -D -H -h /app appuser
 USER appuser
@@ -38,7 +39,10 @@ COPY --from=builder /go/src/harvestor/harvestor_config.yml /app/
 # For now copy the cover report to release container
 COPY --from=builder /tmp/cover.html /tmp/
 WORKDIR /app
+# folder for media files
 RUN mkdir /tmp/data-test
+# folder for test SQLite DB
+RUN mkdir /tmp/db-test
 
 # Release
 ARG ARG_RELEASE_VERSION="0.001"

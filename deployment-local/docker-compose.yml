@@ -9,4 +9,5 @@ services:
       - RELEASE_VERSION=0.01
     volumes:
       - '../data-test:/tmp/data-test'
+      - '../db-test:/tmp/db-test'
 

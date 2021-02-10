@@ -5,7 +5,9 @@ package main
 
 import (
 	"harvestor/config"
+	"harvestor/db"
 	l "harvestor/logger"
+	"harvestor/orchestrator"
 	"os"
 	_ "time"
 )
@@ -15,24 +17,16 @@ func main() {
 	// Getting our Configuration
 	filename := getFileName()
 	config.Load(filename)
-	// Create new logger
-	var logger = l.NewLogger()
 
-	// Debug Log
-	conf := config.GetConf()
-	logger.Debug("conf.Database.DbName : ", conf.Database.DbName)
-	logger.Debug("conf.Walker.EntryPoint : ", conf.Walker.EntryPoint)
-	logger.Debug("conf.HttpClient.ApiUrl : ", conf.HttpClient.ApiUrl)
-	logger.Debug("conf.HttpClient.ObjectSource : ", conf.HttpClient.ObjectSource)
-	logger.Debug("conf.HttpClient.TimeOut : ", conf.HttpClient.TimeOut)
-	logger.Debug("conf.App.Name : ", conf.App.Name)
-	logger.Debug("conf.App.Release : ", conf.App.Release)
-	logger.Debug("conf.App.Env : ", conf.App.Env)
-	logger.Debug("conf.Loger.Level : ", conf.Logger.Level)
+	// DB Init
+	db.Init()
+
+	// Running orchestrator
+	orchestrator.Run()
 
 	// If you need to ssh to the container before exit
 	// Uncomment the following line (it will be up for 3 min)
-	// time.Sleep(180 * time.Second) // sleep for 3 min before exiting
+	// time.Sleep(300 * time.Second) // sleep for 5 min before exiting
 }
 
 // helper function to read args
