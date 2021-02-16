@@ -24,12 +24,18 @@ type Configuration struct {
 	App        AppConfiguration        // App config
 }
 
-// Validation helpers
+// validation helpers
 var ValidConfigFileExtension = "yml"
 
 // define global empty configuration
 var conf Configuration
 
+// Getting Configuration struct
+func GetConf() Configuration {
+	return conf
+}
+
+// Loading from yml config file into our struct
 func Load(filename string) {
 	err := readFromFile(filename)
 	if err != nil {
@@ -37,14 +43,7 @@ func Load(filename string) {
 	}
 }
 
-func GetConf() Configuration {
-	return conf
-}
-
-func GetLoggerLevel() string {
-	return strings.ToLower(conf.Logger.Level)
-}
-
+// Reading from file
 func readFromFile(filename string) error {
 	// get path and file
 	path, file := filepath.Split(filename)
