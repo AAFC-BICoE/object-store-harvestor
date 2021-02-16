@@ -7,16 +7,6 @@ import (
 	"testing"
 )
 
-func TestStructConfiguration(t *testing.T) {
-	fd := GetConf()
-	want := true
-	assert.Equal(t, want, reflect.DeepEqual(fd.Database, DatabaseConfiguration{}))
-	assert.Equal(t, want, reflect.DeepEqual(fd.Walker, FileWalkerConfiguration{}))
-	assert.Equal(t, want, reflect.DeepEqual(fd.HttpClient, HttpClientConfiguration{}))
-	assert.Equal(t, want, reflect.DeepEqual(fd.Logger, LoggerConfiguration{}))
-	assert.Equal(t, want, reflect.DeepEqual(fd.App, AppConfiguration{}))
-}
-
 func TestConfigYmlExtention(t *testing.T) {
 	file := "/go/src/harvestor/harvestor_config.yml"
 	want := true

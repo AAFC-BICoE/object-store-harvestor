@@ -10,20 +10,24 @@ RUN mkdir -p /go/src/harvestor
 # copy assets
 COPY harvestor /go/src/harvestor
 # define working directory
-WORKDIR /go
-# Getting Project dependencies
-RUN go get -v -d /go/src/harvestor/...
+WORKDIR /go/src/harvestor
+# go vendors mode
+RUN go mod vendor
+# pulling all vendors/dependencies
+RUN go get -v -d ./...
 
 # - - - TESTS - - - #
-# Running tests
+# define working directory
+WORKDIR /go
+# getting test dependencies
 RUN go get -v github.com/stretchr/testify/assert
+# Running tests
 RUN CGO_ENABLED=0 go test /go/src/harvestor/... -v -coverprofile cover.out
 # Output html coverage report to /tmp/cover.html
 RUN go tool cover -html=cover.out -o /tmp/cover.html
 # When close to prod
 # RUN go tool cover -func cover.out | grep total | awk '{print substr($3, 1, length($3)-1)}'
 # And we need to post using curl to one of the services
-
 # Building Artifact
 RUN go build -o main /go/src/harvestor
 
