@@ -16,7 +16,7 @@ httpclient:
 */
 
 func TestGetTimeOut(t *testing.T) {
-	var file = "/go/src/harvestor/harvestor_config.yml"
+	var file = "../harvestor_config.yml"
 	Load(file)
 	conf := GetConf()
 	want := 300
@@ -25,7 +25,7 @@ func TestGetTimeOut(t *testing.T) {
 }
 
 func TestGetBaseApiUrl(t *testing.T) {
-	var file = "/go/src/harvestor/harvestor_config.yml"
+	var file = "../harvestor_config.yml"
 	Load(file)
 	conf := GetConf()
 	want := "http://localhost:8080"
@@ -33,7 +33,7 @@ func TestGetBaseApiUrl(t *testing.T) {
 }
 
 func TestGetUri(t *testing.T) {
-	var file = "/go/src/harvestor/harvestor_config.yml"
+	var file = "../harvestor_config.yml"
 	Load(file)
 	conf := GetConf()
 	want := "/api/v1/object"

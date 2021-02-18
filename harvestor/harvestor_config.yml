@@ -6,11 +6,12 @@ database:
   # Number of minutes connection will live
   connMaxLifetime: 30
   # Path to SQLite DB
-  dbFile: "/tmp/data-test/harvestor.db"
+  dbFile: "/tmp/db-test/harvestor.db"
 
 walker:
   # File walker root path for media files
   EntryPointPath: "/tmp/data-test"
+  FilesOfInterest: "jpg, png"
 
 httpclient:
   # Number of max Open connections to SQLite DB

@@ -1,15 +1,16 @@
 package walker
 
 import (
-	_ "errors"
-	_ "fmt"
+	"errors"
+	"fmt"
 	"harvestor/config"
+	"harvestor/db"
 	l "harvestor/logger"
-	_ "os"
-	_ "path/filepath"
-	_ "runtime"
-	_ "strings"
-	_ "sync"
+	"os"
+	"path/filepath"
+	"runtime"
+	"strings"
+	"sync"
 )
 
 // entry point for external calls
@@ -18,26 +19,34 @@ func Run() {
 	var logger = l.NewLogger()
 	conf := config.GetConf()
 	logger.Info("Harvester Walker is about to scan : ", conf.Walker.Path())
-	/*
-		err := Walk(conf.Walker.Path(), walkFunc)
-		if err != nil {
-			logger.Error("Harvester Walker scan ERROR:", err)
-		}
-	*/
+	err := Walk(conf.Walker.Path(), walkFunc)
+	if err != nil {
+		logger.Error("Harvester Walker scan ERROR:", err)
+	}
 
 }
 
-/*
 func walkFunc(path string, info os.FileInfo, err error) error {
 	var logger = l.NewLogger()
-	logger.Info("= = = = = = = = = = = = = = = = = = = = = =")
-	logger.Info("path : ", path)
-	logger.Info("info : ", info)
+	if !info.IsDir() && isInterest(info) {
+		var fr db.File
+		err := fr.Create(path, info)
+		if err != nil {
+			logger.Error("||| DB create err :", err)
+		}
+		// Debug
+		//logger.Info("||| fr :", fr)
+		//Create
+		//logger.Info("= = = = = = = = = = = = = = = = = = = = = =")
+		//logger.Info("||| path :", path)
+		//logger.Info("info.Name() :", info.Name())
+		//logger.Info("info.Size() :", info.Size())
+		//logger.Info("info.ModTime() : ", info.ModTime())
+		//logger.Info("info.IsDir() :", info.IsDir())
+	}
 	return err
 }
-*/
 
-/*
 // NumWorkers defines how many workers to run
 // on each Walk() function invocation
 var NumWorkers = runtime.GOMAXPROCS(0)
@@ -70,14 +79,6 @@ type WalkerError struct {
 // WalkerErrorList struct store a list of errors reported from all worker routines
 type WalkerErrorList struct {
 	ErrorList []WalkerError
-}
-
-func walkFunc(path string, info os.FileInfo, err error) error {
-	var logger = l.NewLogger()
-	logger.Info("= = = = = = = = = = = = = = = = = = = = = =")
-	logger.Info("path : ", path)
-	logger.Info("info : ", info)
-	return err
 }
 
 // Implement the error interface for WalkerError
@@ -230,6 +231,7 @@ func (w *Walker) worker() {
 // calling walkFn for each file or directory
 // in the tree, including the root directory.
 func (w *Walker) Walk(relpath string, walkFn filepath.WalkFunc) error {
+	//var logger = l.NewLogger()
 	w.errors = make(chan WalkerError, BufferSize)
 	w.jobs = make(chan string, BufferSize)
 	w.walkFunc = walkFn
@@ -238,6 +240,7 @@ func (w *Walker) Walk(relpath string, walkFn filepath.WalkFunc) error {
 	go w.collectErrors()
 
 	info, err := w.lstat(relpath)
+	//logger.Info("info : ", info)
 	err = w.walkFunc(relpath, info, err)
 	if err == filepath.SkipDir {
 		return nil
@@ -291,4 +294,25 @@ func WalkWithSymlinks(root string, walkFn filepath.WalkFunc) error {
 	return w.Walk("", walkFn)
 }
 
-*/
+// get file extension
+func getFileExtension(filename string) string {
+	return strings.ToLower(strings.TrimPrefix(filepath.Ext(filename), "."))
+}
+
+// check if we are interested in the current file
+func isInterest(info os.FileInfo) bool {
+	conf := config.GetConf()
+	interest := strings.Split(conf.Walker.Interest(), ",")
+	return contains(interest, getFileExtension(info.Name()))
+}
+
+// check if the string is in the slice
+func contains(s []string, str string) bool {
+	for _, v := range s {
+		if v == str {
+			return true
+		}
+	}
+
+	return false
+}

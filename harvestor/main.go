@@ -6,14 +6,13 @@ package main
 import (
 	"harvestor/config"
 	"harvestor/db"
-	l "harvestor/logger"
 	"harvestor/orchestrator"
+	"log"
 	"os"
 	_ "time"
 )
 
 func main() {
-
 	// Getting our Configuration
 	filename := getFileName()
 	config.Load(filename)
@@ -31,16 +30,14 @@ func main() {
 
 // helper function to read args
 func getFileName() string {
-	var logger = l.NewLogger()
-
 	args := os.Args
-	if len(os.Args) < 1 {
+	if len(args) == 1 {
 		example := "(example : /app/harvestor_config.yml)"
 		err := "Application requires an argument as a string to a config file, none has been provided ||| " + example
-		logger.Error(err)
+		log.Fatal(err)
 	}
-	logger.Debug("args :", args)
+	log.Println("args :", args)
 	filename := args[1]
-	logger.Debug("filename :", filename)
+	log.Println("filename :", filename)
 	return filename
 }

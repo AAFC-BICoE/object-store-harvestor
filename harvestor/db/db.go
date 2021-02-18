@@ -1,8 +1,8 @@
 package db
 
 import (
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 	"harvestor/config"
 	l "harvestor/logger"
 	"time"
@@ -20,25 +20,28 @@ func initHarvester() {
 	var logger = l.NewLogger()
 	// getting config for our db
 	conf := config.GetConf()
-	dbHarvester, err := gorm.Open("sqlite3", conf.Database.DBFile())
+	// trying to open sqlite DB
+	d, err := gorm.Open(sqlite.Open(conf.Database.DBFile()), &gorm.Config{})
+	//dbHarvester, err := gorm.Open("sqlite3", conf.Database.DBFile())
 	if err != nil {
 		logger.Fatal("Can NOT open SQLite DB:", err)
 	}
+	// assign to global
+	dbHarvester = d
+	// details
+	db, err := d.DB()
+	if err != nil {
+		logger.Fatal("Can NOT get Stats for SQLite DB:", err)
+	}
 	// Controlling open connections
-	dbHarvester.DB().SetMaxOpenConns(conf.Database.MaxOpenConnections())
+	db.SetMaxOpenConns(conf.Database.MaxOpenConnections())
 	// Max Idle connections
-	dbHarvester.DB().SetMaxIdleConns(conf.Database.MaxIdleConnections())
+	db.SetMaxIdleConns(conf.Database.MaxIdleConnections())
 	// SetConnMaxLifetime sets the maximum amount of time a connection may be reused.
-	dbHarvester.DB().SetConnMaxLifetime(time.Duration(conf.Database.MaxConnectionLifeTime()) * time.Minute)
+	db.SetConnMaxLifetime(time.Duration(conf.Database.MaxConnectionLifeTime()) * time.Minute)
 	// Logging DB Stats
-	logger.Info("Harvester Database connected ||| dbHarvester Stats ... ", dbHarvester.DB().Stats())
-	// deferring db close
-	defer dbHarvester.Close()
-}
+	logger.Info("Harvester Database connected ||| dbHarvester Stats ... ", db.Stats())
 
-// Get our db for sql operations
-func GetarvesterDB() *gorm.DB {
-	return dbHarvester
 }
 
 func migrateHarvester() {
@@ -46,13 +49,16 @@ func migrateHarvester() {
 	var logger = l.NewLogger()
 	// just a plcae holder
 	logger.Info("Harvester Database checking for migration ... ")
-	/*
-		if !dbHarvester.HasTable(&WalkFiles{}) {
-			err := dbHarvester.HasTable.CreateTable(&WalkFiles{})
-			if err != nil {
-				logger.Fatal("Can not migrate walk_files table :", err)
+	// Migrate the schema
+	db := GetHarvesterDB()
+	err := db.AutoMigrate(&File{})
+	if err != nil {
+		logger.Fatal("Can NOT AutoMigrate for SQLite DB:", err)
+	}
+	logger.Info("Harvester Database AutoMigrate is Done !!!")
+}
 
-			}
-		}
-	*/
+// Get our db for sql operations
+func GetHarvesterDB() *gorm.DB {
+	return dbHarvester
 }

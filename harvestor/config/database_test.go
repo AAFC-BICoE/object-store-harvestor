@@ -18,7 +18,7 @@ database:
 */
 
 func TestMaxOpenConnections(t *testing.T) {
-	var file = "/go/src/harvestor/harvestor_config.yml"
+	var file = "../harvestor_config.yml"
 	Load(file)
 	conf := GetConf()
 	want := 2
@@ -27,7 +27,7 @@ func TestMaxOpenConnections(t *testing.T) {
 }
 
 func TestMaxIdleConnections(t *testing.T) {
-	var file = "/go/src/harvestor/harvestor_config.yml"
+	var file = "../harvestor_config.yml"
 	Load(file)
 	conf := GetConf()
 	want := 2
@@ -35,7 +35,7 @@ func TestMaxIdleConnections(t *testing.T) {
 }
 
 func TestMaxConnectionLifeTime(t *testing.T) {
-	var file = "/go/src/harvestor/harvestor_config.yml"
+	var file = "../harvestor_config.yml"
 	Load(file)
 	conf := GetConf()
 	want := 30
@@ -43,9 +43,9 @@ func TestMaxConnectionLifeTime(t *testing.T) {
 }
 
 func TestDBFile(t *testing.T) {
-	var file = "/go/src/harvestor/harvestor_config.yml"
+	var file = "../harvestor_config.yml"
 	Load(file)
 	conf := GetConf()
-	want := "/tmp/data-test/harvestor.db"
+	want := "/tmp/db-test/harvestor.db"
 	assert.Equal(t, want, conf.Database.DBFile())
 }

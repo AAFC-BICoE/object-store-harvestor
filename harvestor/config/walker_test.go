@@ -12,7 +12,7 @@ walker:
 */
 
 func TestPath(t *testing.T) {
-	var file = "/go/src/harvestor/harvestor_config.yml"
+	var file = "../harvestor_config.yml"
 	Load(file)
 	conf := GetConf()
 	want := "/tmp/data-test"
