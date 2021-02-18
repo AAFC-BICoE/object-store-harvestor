@@ -37,7 +37,8 @@ func NewLogger() *StandardLogger {
 	// define log formatter as JSON
 	standardLogger.Formatter = &logrus.JSONFormatter{}
 	// getting log level from our config
-	l := config.GetLoggerLevel()
+	conf := config.GetConf()
+	l := conf.Logger.GetLevel()
 	// if level is set correctly then setting ...
 	level, ok := Levels[l]
 	if ok {
