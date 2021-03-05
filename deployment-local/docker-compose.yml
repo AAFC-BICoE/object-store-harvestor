@@ -10,4 +10,5 @@ services:
     volumes:
       - '../data-test:/tmp/data-test'
       - '../db-test:/tmp/db-test'
+    network_mode: host
 

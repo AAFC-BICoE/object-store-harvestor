@@ -14,12 +14,13 @@ walker:
   FilesOfInterest: "jpg, png"
 
 httpclient:
-  # Number of max Open connections to SQLite DB
   timeOut: 300
-  # Number of max Open connections to SQLite DB
-  baseApiUrl: "http://localhost:8080"
-  # Number of max Open connections to SQLite DB
-  uri: "/api/v1/object" 
+  maxIdleConnections: 10 
+  RetryMax: 2 # how many times to retry
+  RetryWaitMin: 3 # how many seconds to wait for retry
+  baseApiUrl: "http://localhost:8081"
+  upload: "/api/v1/file/dev-group"
+  meta: "/api/v1/meta"
 
 logger:
   level: "Debug"

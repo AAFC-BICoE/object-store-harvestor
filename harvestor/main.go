@@ -6,6 +6,7 @@ package main
 import (
 	"harvestor/config"
 	"harvestor/db"
+	"harvestor/httpclient"
 	"harvestor/orchestrator"
 	"log"
 	"os"
@@ -19,6 +20,11 @@ func main() {
 
 	// DB Init
 	db.Init()
+
+	// httpclient Init
+	httpclient.InitHttpClient()
+
+	//httpclient.Init()
 
 	// Running orchestrator
 	orchestrator.Run()

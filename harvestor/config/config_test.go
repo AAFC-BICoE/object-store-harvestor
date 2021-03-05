@@ -2,13 +2,14 @@ package config
 
 import (
 	"github.com/stretchr/testify/assert"
+	_ "log"
 	"path/filepath"
 	"reflect"
 	"testing"
 )
 
 func TestConfigYmlExtention(t *testing.T) {
-	file := "../harvestor_config.yml"
+	file := "../default_harvestor_config.yml"
 	want := true
 
 	assert.Equal(t, want, isValidConfigFile(file))
@@ -22,7 +23,7 @@ func TestConfigJsonExtention(t *testing.T) {
 }
 
 func TestDefaultYmlExistingConfiguration(t *testing.T) {
-	file := "../harvestor_config.yml"
+	file := "../default_harvestor_config.yml"
 	e := readFromFile(file)
 
 	assert.Nil(t, e)
@@ -36,21 +37,21 @@ func TestDefaultJsonExistingConfiguration(t *testing.T) {
 }
 
 func TestDefaultNotExistingConfiguration(t *testing.T) {
-	file := "../not_existing_harvestor_config.yml"
+	file := "../not_existing_default_harvestor_config.yml"
 	e := readFromFile(file)
 
 	assert.NotNil(t, e)
 }
 
 func TestDefaultConfiguration(t *testing.T) {
-	file := "../harvestor_config.yml"
+	file := "../default_harvestor_config.yml"
 	Load(file)
 	fd := GetConf()
 	want := true
 	fDatabase := &DatabaseConfiguration{2, 2, 30, "/tmp/db-test/harvestor.db"}
 	fWalker := &FileWalkerConfiguration{"/tmp/data-test", "jpg, png"}
-	fHttpClient := &HttpClientConfiguration{300, "http://localhost:8080", "/api/v1/object"}
-	fLogger := &LoggerConfiguration{"Debug", "/var/logs/AAFC", "harvestor.log"}
+	fHttpClient := &HttpClientConfiguration{300, 2, 3, 10, "http://localhost:8081", "/api/v1/file/dev-group", "/api/v1/meta"}
+	fLogger := &LoggerConfiguration{"Info", "/var/logs/AAFC", "harvestor.log"}
 	fAppConfiguration := &AppConfiguration{"0.01", "harvestor", "dev"}
 
 	assert.Equal(t, want, reflect.DeepEqual(fd.Database, *fDatabase))
@@ -61,16 +62,16 @@ func TestDefaultConfiguration(t *testing.T) {
 }
 
 func TestDefaultLoggerLevel(t *testing.T) {
-	file := "../harvestor_config.yml"
+	file := "../default_harvestor_config.yml"
 	Load(file)
 	conf := GetConf()
 	l := conf.Logger.GetLevel()
-	want := "debug"
+	want := "info"
 	assert.Equal(t, want, l)
 }
 
 func TestDefaultFileExtension(t *testing.T) {
-	filename := "../harvestor_config.yml"
+	filename := "../default_harvestor_config.yml"
 	_, file := filepath.Split(filename)
 	want := "yml"
 
@@ -78,9 +79,9 @@ func TestDefaultFileExtension(t *testing.T) {
 }
 
 func TestDefaultFileName(t *testing.T) {
-	filename := "../harvestor_config.yml"
+	filename := "../default_harvestor_config.yml"
 	_, file := filepath.Split(filename)
-	want := "harvestor_config"
+	want := "default_harvestor_config"
 
 	assert.Equal(t, want, getFileName(file))
 }

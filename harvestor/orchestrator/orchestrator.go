@@ -1,6 +1,7 @@
 package orchestrator
 
 import (
+	"harvestor/httpclient"
 	l "harvestor/logger"
 	"harvestor/walker"
 )
@@ -11,6 +12,7 @@ func Run() {
 
 	logger.Info("Orchestrator is about to run ...")
 	walker.Run()
+	httpclient.Run()
 	logger.Info("Orchestrator has finished the run !!!")
 	// Debug Log
 	//conf := config.GetConf()

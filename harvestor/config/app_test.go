@@ -13,7 +13,7 @@ app:
 */
 
 func TestGetRelease(t *testing.T) {
-	var file = "../harvestor_config.yml"
+	var file = "../default_harvestor_config.yml"
 	Load(file)
 	conf := GetConf()
 	want := "0.01"
@@ -22,7 +22,7 @@ func TestGetRelease(t *testing.T) {
 }
 
 func TestGetName(t *testing.T) {
-	var file = "../harvestor_config.yml"
+	var file = "../default_harvestor_config.yml"
 	Load(file)
 	conf := GetConf()
 	want := "harvestor"
@@ -30,7 +30,7 @@ func TestGetName(t *testing.T) {
 }
 
 func TestGetEnvironment(t *testing.T) {
-	var file = "../harvestor_config.yml"
+	var file = "../default_harvestor_config.yml"
 	Load(file)
 	conf := GetConf()
 	want := "dev"

@@ -1,6 +1,7 @@
 package db
 
 import (
+	"github.com/onrik/gorm-logrus"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"harvestor/config"
@@ -21,8 +22,9 @@ func initHarvester() {
 	// getting config for our db
 	conf := config.GetConf()
 	// trying to open sqlite DB
-	d, err := gorm.Open(sqlite.Open(conf.Database.DBFile()), &gorm.Config{})
-	//dbHarvester, err := gorm.Open("sqlite3", conf.Database.DBFile())
+	d, err := gorm.Open(sqlite.Open(conf.Database.DBFile()), &gorm.Config{
+		Logger: gorm_logrus.New(),
+	})
 	if err != nil {
 		logger.Fatal("Can NOT open SQLite DB:", err)
 	}
@@ -33,6 +35,7 @@ func initHarvester() {
 	if err != nil {
 		logger.Fatal("Can NOT get Stats for SQLite DB:", err)
 	}
+
 	// Controlling open connections
 	db.SetMaxOpenConns(conf.Database.MaxOpenConnections())
 	// Max Idle connections
@@ -41,7 +44,6 @@ func initHarvester() {
 	db.SetConnMaxLifetime(time.Duration(conf.Database.MaxConnectionLifeTime()) * time.Minute)
 	// Logging DB Stats
 	logger.Info("Harvester Database connected ||| dbHarvester Stats ... ", db.Stats())
-
 }
 
 func migrateHarvester() {
@@ -51,10 +53,19 @@ func migrateHarvester() {
 	logger.Info("Harvester Database checking for migration ... ")
 	// Migrate the schema
 	db := GetHarvesterDB()
+	db.Exec("PRAGMA foreign_keys = ON;")
 	err := db.AutoMigrate(&File{})
 	if err != nil {
-		logger.Fatal("Can NOT AutoMigrate for SQLite DB:", err)
+		logger.Fatal("Can NOT AutoMigrate `File` for SQLite DB:", err)
 	}
+	err = db.AutoMigrate(&Upload{})
+	if err != nil {
+		logger.Fatal("Can NOT AutoMigrate `Upload` for SQLite DB:", err)
+	}
+	//err = db.Migrator().CreateConstraint(&Upload{}, "fk_uploads_files")
+	//if err != nil {
+	//	logger.Fatal("Can NOT CreateConstraint on `Upload` for SQLite DB:", err)
+	//}
 	logger.Info("Harvester Database AutoMigrate is Done !!!")
 }
 
