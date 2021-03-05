@@ -1,0 +1,14 @@
+# directory structure
+bin/*
+pkg/*
+
+# goop - go package manager
+.vendor
+
+# Folders
+
+# Files
+*.exe
+harvestor/develop_run.sh
+harvestor/main
+
