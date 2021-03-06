@@ -28,21 +28,14 @@ func Run() {
 
 func walkFunc(path string, info os.FileInfo, err error) error {
 	var logger = l.NewLogger()
+	logger.Debug("walker path :", path)
 	if !info.IsDir() && isInterest(info) {
 		var fr db.File
 		err := fr.Create(path, info)
 		if err != nil {
 			logger.Error("||| DB create err :", err)
 		}
-		// Debug
-		//logger.Info("||| fr :", fr)
-		//Create
-		//logger.Info("= = = = = = = = = = = = = = = = = = = = = =")
-		//logger.Info("||| path :", path)
-		//logger.Info("info.Name() :", info.Name())
-		//logger.Info("info.Size() :", info.Size())
-		//logger.Info("info.ModTime() : ", info.ModTime())
-		//logger.Info("info.IsDir() :", info.IsDir())
+		logger.Debug("Walker found :", path)
 	}
 	return err
 }
@@ -302,17 +295,20 @@ func getFileExtension(filename string) string {
 // check if we are interested in the current file
 func isInterest(info os.FileInfo) bool {
 	conf := config.GetConf()
-	interest := strings.Split(conf.Walker.Interest(), ",")
+	var logger = l.NewLogger()
+	prep := strings.Replace(conf.Walker.Interest(), ",", " ", -1)
+	interest := strings.Fields(prep)
+	logger.Debug("files of interest : ", interest)
+	logger.Debug("current file extension : ", getFileExtension(info.Name()))
 	return contains(interest, getFileExtension(info.Name()))
 }
 
 // check if the string is in the slice
-func contains(s []string, str string) bool {
-	for _, v := range s {
-		if v == str {
+func contains(a []string, x string) bool {
+	for _, n := range a {
+		if x == n {
 			return true
 		}
 	}
-
 	return false
 }

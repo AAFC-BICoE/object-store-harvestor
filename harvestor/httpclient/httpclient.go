@@ -16,17 +16,24 @@ func InitHttpClient() {
 	httpClient.RetryMax = conf.HttpClient.GetRetryMax()
 	httpClient.RetryWaitMin = time.Duration(conf.HttpClient.GetRetryWaitMin()) * time.Second
 	httpClient.HTTPClient.Timeout = time.Duration(conf.HttpClient.GetTimeOut()) * time.Second
-	httpClient.Logger = l.NewLogger()
+	logger := l.NewLogger()
+	httpClient.Logger = logger
+	logger.Info("Harvestor Http Client has been initialized !!!")
 }
 
 func Run() {
 	var files []db.File
 	db.GetNewFiles(&files)
 	for _, file := range files {
-		err := uplaodImage(&file)
+		upload, err := uplaodImage(&file)
 		// if all good set the status of the file as "uploaded"
 		if err == nil {
-			file.MarkUploaded()
+			db.SetFileStatus(&file, "uploaded")
+			_, err := postMeta(&upload)
+			// if all good set the status of the file as "completed"
+			if err == nil {
+				db.SetFileStatus(&file, "completed")
+			}
 		}
 	}
 

@@ -1,8 +1,8 @@
 database:
   # Number of max Open connections to SQLite DB
-  maxOpenConns: 2
+  maxOpenConns: 5
   # Number of max Idle connections to SQLite DB
-  maxIdleConns: 2 
+  maxIdleConns: 5
   # Number of minutes connection will live
   connMaxLifetime: 30
   # Path to SQLite DB
@@ -20,7 +20,7 @@ httpclient:
   RetryWaitMin: 3 # how many seconds to wait for retry
   baseApiUrl: "http://localhost:8081"
   upload: "/api/v1/file/dev-group"
-  meta: "/api/v1/meta"
+  meta: "/api/v1/metadata"
 
 logger:
   level: "Debug"

@@ -43,7 +43,7 @@ func initHarvester() {
 	// SetConnMaxLifetime sets the maximum amount of time a connection may be reused.
 	db.SetConnMaxLifetime(time.Duration(conf.Database.MaxConnectionLifeTime()) * time.Minute)
 	// Logging DB Stats
-	logger.Info("Harvester Database connected ||| dbHarvester Stats ... ", db.Stats())
+	logger.Info("Harvester Database connected !!!")
 }
 
 func migrateHarvester() {
@@ -51,21 +51,25 @@ func migrateHarvester() {
 	var logger = l.NewLogger()
 	// just a plcae holder
 	logger.Info("Harvester Database checking for migration ... ")
-	// Migrate the schema
 	db := GetHarvesterDB()
-	db.Exec("PRAGMA foreign_keys = ON;")
+	// Migrate the schema for file table
 	err := db.AutoMigrate(&File{})
 	if err != nil {
 		logger.Fatal("Can NOT AutoMigrate `File` for SQLite DB:", err)
 	}
+	// Migrate the schema for upload table
 	err = db.AutoMigrate(&Upload{})
 	if err != nil {
 		logger.Fatal("Can NOT AutoMigrate `Upload` for SQLite DB:", err)
 	}
-	//err = db.Migrator().CreateConstraint(&Upload{}, "fk_uploads_files")
-	//if err != nil {
-	//	logger.Fatal("Can NOT CreateConstraint on `Upload` for SQLite DB:", err)
-	//}
+	// Migrate the schema for meta table
+	err = db.AutoMigrate(&Meta{})
+	if err != nil {
+		logger.Fatal("Can NOT AutoMigrate `Meta` for SQLite DB:", err)
+	}
+	// forcing foreign keys in SQLite
+	db.Exec("PRAGMA foreign_keys = ON;")
+	// Done
 	logger.Info("Harvester Database AutoMigrate is Done !!!")
 }
 

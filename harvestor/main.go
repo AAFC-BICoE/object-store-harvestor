@@ -10,7 +10,6 @@ import (
 	"harvestor/orchestrator"
 	"log"
 	"os"
-	_ "time"
 )
 
 func main() {
@@ -42,8 +41,8 @@ func getFileName() string {
 		err := "Application requires an argument as a string to a config file, none has been provided ||| " + example
 		log.Fatal(err)
 	}
-	log.Println("args :", args)
+	//log.Println("args :", args)
 	filename := args[1]
-	log.Println("filename :", filename)
+	//log.Println("filename :", filename)
 	return filename
 }

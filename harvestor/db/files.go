@@ -59,10 +59,15 @@ func (f File) GetUpdatedAt() time.Time {
 }
 
 func (f File) Create(path string, info os.FileInfo) error {
+	// get logger
 	var logger = l.NewLogger()
+	// get config
 	conf := config.GetConf()
+	// get DB instance
 	db := GetHarvesterDB()
+	// define absolute path
 	absolutePath := conf.Walker.Path() + string(os.PathSeparator) + path
+	// validation | check if the record already exist
 	if doesNotExist(absolutePath) {
 		// Create new one
 		err := db.FirstOrCreate(&f,
@@ -73,20 +78,21 @@ func (f File) Create(path string, info os.FileInfo) error {
 				Status:  "new",
 			}).Error
 		if err != nil {
-			logger.Error("File record CAN NOT BE created:", err)
+			errMsg := "File record CAN NOT be stored in DB for :"
+			logger.Error(errMsg, f.GetPath(), err)
 			return err
 		}
-		logger.Info("File record has been processed for : ", f.GetPath())
+		logger.Info("File record has been stored in DB for :", f.GetPath())
 		return err
 	}
 	return nil
 }
 
-// After upload change status from "new" to "upload"
-func (f File) MarkUploaded() error {
+// After upload change status from "new" to "complete"
+func SetFileStatus(f *File, status string) error {
 	db := GetHarvesterDB()
-	f.Status = "uploaded"
-	err := db.Save(&f).Error
+	f.Status = status
+	err := db.Save(f).Error
 	return err
 }
 
@@ -100,6 +106,8 @@ func doesNotExist(absolutePath string) bool {
 
 // get all files with status "new"
 func GetNewFiles(files *[]File) {
+	var logger = l.NewLogger()
 	db := GetHarvesterDB()
 	db.Where("status = ?", "new").Find(files)
+	logger.Debug("Found for upload total files : ", len(*files))
 }

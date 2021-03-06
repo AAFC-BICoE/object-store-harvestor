@@ -58,13 +58,6 @@ func readFromFile(filename string) error {
 	name := getFileName(file)
 	// define file extension
 	extension := getFileExtension(file)
-	// Debug for now
-	//log.Println("---------------------- C o n f i g ----------------------------")
-	//log.Println("||| config file path :", path)
-	//log.Println("||| config file name :", name)
-	//log.Println("||| config file extension :", extension)
-	//log.Println("---------------------------------------------------------------")
-
 	// init new viper
 	v := viper.New()
 	// passing file to viper
