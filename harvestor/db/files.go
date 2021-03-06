@@ -90,9 +90,14 @@ func (f File) Create(path string, info os.FileInfo) error {
 
 // After upload change status from "new" to "complete"
 func SetFileStatus(f *File, status string) error {
+	// get logger
+	var logger = l.NewLogger()
 	db := GetHarvesterDB()
 	f.Status = status
 	err := db.Save(f).Error
+	if err == nil {
+		logger.Info("File record has been "+status+" for : ", f.GetPath())
+	}
 	return err
 }
 

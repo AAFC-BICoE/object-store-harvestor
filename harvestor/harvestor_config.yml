@@ -23,7 +23,7 @@ httpclient:
   meta: "/api/v1/metadata"
 
 logger:
-  level: "Debug"
+  level: "Info"
   path: "/var/logs/AAFC"
   file: "harvestor.log"
 

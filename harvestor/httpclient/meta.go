@@ -3,7 +3,6 @@ package httpclient
 import (
 	"bytes"
 	"encoding/json"
-	c "github.com/hashicorp/go-retryablehttp"
 	"harvestor/config"
 	"harvestor/db"
 	l "harvestor/logger"
@@ -61,7 +60,7 @@ func postMeta(upload *db.Upload) (db.Meta, error) {
 		return meta, err
 	}
 
-	resp, err := c.Post(url, "application/vnd.api+json", bytes.NewBuffer(payload))
+	resp, err := httpClient.Post(url, "application/vnd.api+json", bytes.NewBuffer(payload))
 	if err != nil {
 		logger.Error(" post meta fail details :", err)
 		return meta, err
