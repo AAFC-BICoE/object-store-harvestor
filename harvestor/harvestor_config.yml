@@ -24,7 +24,7 @@ httpclient:
 
 logger:
   level: "Info"
-  path: "/var/logs/AAFC"
+  path: "/tmp"
   file: "harvestor.log"
 
 app:

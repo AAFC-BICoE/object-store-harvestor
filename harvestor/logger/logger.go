@@ -7,15 +7,21 @@
 package logger
 
 import (
+	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
+	"github.com/rifflock/lfshook"
 	"github.com/sirupsen/logrus"
 	"harvestor/config"
 	"os"
+	"time"
 )
 
 // StandardLogger enforces specific log message formats
 type StandardLogger struct {
 	*logrus.Logger
 }
+
+// init global instance
+var standardLogger *StandardLogger
 
 // Map log level from config
 var Levels = map[string]logrus.Level{
@@ -30,47 +36,72 @@ var Levels = map[string]logrus.Level{
 
 // NewLogger initializes the standard logger
 func NewLogger() *StandardLogger {
+	if standardLogger != nil {
+		return standardLogger
+	}
+
 	// new base logrus
 	var baseLogger = logrus.New()
 	// introducing our standard logger from base logrus logger
-	var standardLogger = &StandardLogger{baseLogger}
-	// define log formatter as JSON
-	standardLogger.Formatter = &logrus.JSONFormatter{}
+	standardLogger = &StandardLogger{baseLogger}
 	// getting log level from our config
 	conf := config.GetConf()
+	// getting log level from config
 	l := conf.Logger.GetLevel()
 	// if level is set correctly then setting ...
 	level, ok := Levels[l]
 	if ok {
 		standardLogger.SetLevel(level)
 	} else {
-		// fallback in case of an error to Info
+		// fallback in case of an error in the config to Info
 		standardLogger.SetLevel(logrus.InfoLevel)
 	}
 
-	// Define Output for logs
-	standardLogger.SetOutput(os.Stdout)
-	// add a caller info to the logs
-	if standardLogger.GetLevel() == logrus.DebugLevel {
-		standardLogger.SetReportCaller(true)
+	// define path to the file from config
+	path := conf.Logger.GetPath() + string(os.PathSeparator) + conf.Logger.GetFile()
+	// setting log rotate
+	writer, err := rotatelogs.New(
+		path+".%Y%m%d%H%M",
+		rotatelogs.WithLinkName(path),
+		rotatelogs.WithRotationTime(time.Hour*24), // rotate each day
+		rotatelogs.WithMaxAge(-1),                 // reset max age due to count
+		rotatelogs.WithRotationCount(7),           // keep logs for 1 week top
+	)
+
+	// check if the writer is ok for the log file
+	if err != nil {
+		logrus.Fatal(" Can't create rotatelogs ", path, " | ", err)
 	}
 
-	// Define Output for logs as a file
-	//standardLogger.SetOutputFile("/tmp/harverstor.log")
+	// need only the following levels in the log file
+	standardLogger.Hooks.Add(lfshook.NewHook(
+		lfshook.WriterMap{
+			logrus.InfoLevel:  writer,
+			logrus.WarnLevel:  writer,
+			logrus.ErrorLevel: writer,
+			logrus.FatalLevel: writer,
+			logrus.PanicLevel: writer,
+		},
+		&logrus.JSONFormatter{
+			// for debug only
+			// make it to true if it's hard to see in json logs
+			PrettyPrint:     false,
+			TimestampFormat: time.RFC822,
+		},
+	))
+
+	// SetOutput
+	standardLogger.SetOutput(os.Stdout)
+	standardLogger.SetFormatter(&logrus.TextFormatter{
+		ForceColors:     true,
+		FullTimestamp:   true,
+		TimestampFormat: time.RFC822,
+	})
+
+	// some bonus for Debug
+	if standardLogger.GetLevel() == logrus.DebugLevel {
+		baseLogger.SetReportCaller(true)
+	}
 
 	return standardLogger
-}
-
-// Extra log output
-func (l *StandardLogger) SetOutputFile(filename string) {
-	// TODO
-	// need to open file in orchestrator
-	// with defer file.Close()
-	// can't close the file here
-	// the logger is global
-	file, err := os.OpenFile(filename, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 640)
-	if err != nil {
-		l.Fatal(err)
-	}
-	l.SetOutput(file)
 }
