@@ -44,5 +44,7 @@ WORKDIR /app
 RUN mkdir /tmp/data-test
 # folder for test SQLite DB
 RUN mkdir /tmp/db-test
+# folder for test logs
+RUN mkdir /tmp/log-test
 
 CMD ["./main", "/app/harvestor_config.yml"]

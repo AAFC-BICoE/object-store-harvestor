@@ -24,7 +24,7 @@ httpclient:
 
 logger:
   level: "Info"
-  path: "/tmp"
+  path: "/tmp/log-test"
   file: "harvestor.log"
 
 app:
