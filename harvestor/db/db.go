@@ -26,14 +26,14 @@ func initHarvester() {
 		Logger: gorm_logrus.New(),
 	})
 	if err != nil {
-		logger.Fatal("Can NOT open SQLite DB:", err)
+		logger.Fatal("Can NOT open SQLite DB: ", conf.Database.DBFile(), " | ", err)
 	}
 	// assign to global
 	dbHarvester = d
 	// details
 	db, err := d.DB()
 	if err != nil {
-		logger.Fatal("Can NOT get Stats for SQLite DB:", err)
+		logger.Fatal("Can NOT get Stats for SQLite DB:", conf.Database.DBFile(), " | ", err)
 	}
 
 	// Controlling open connections

@@ -18,10 +18,10 @@ func Run() {
 	// Create new logger
 	var logger = l.NewLogger()
 	conf := config.GetConf()
-	logger.Info("Harvester Walker is about to scan : ", conf.Walker.Path())
-	err := Walk(conf.Walker.Path(), walkFunc)
+	logger.Info("Harvester Walker:EntryPointPath: `", conf.Walker.Path(), "`")
+	err := WalkWithSymlinks(conf.Walker.Path(), walkFunc)
 	if err != nil {
-		logger.Error("Harvester Walker scan ERROR:", err)
+		logger.Error("Harvester Walker ERROR:", err)
 	}
 
 }
@@ -33,9 +33,9 @@ func walkFunc(path string, info os.FileInfo, err error) error {
 		var fr db.File
 		err := fr.Create(path, info)
 		if err != nil {
-			logger.Error("||| DB create err :", err)
+			logger.Error("Walker:File:Create :", err)
 		}
-		logger.Debug("Walker found :", path)
+		logger.Debug("Walker:File found :", path)
 	}
 	return err
 }
@@ -224,6 +224,7 @@ func (w *Walker) worker() {
 // calling walkFn for each file or directory
 // in the tree, including the root directory.
 func (w *Walker) Walk(relpath string, walkFn filepath.WalkFunc) error {
+	var logger = l.NewLogger()
 	//var logger = l.NewLogger()
 	w.errors = make(chan WalkerError, BufferSize)
 	w.jobs = make(chan string, BufferSize)
@@ -233,7 +234,18 @@ func (w *Walker) Walk(relpath string, walkFn filepath.WalkFunc) error {
 	go w.collectErrors()
 
 	info, err := w.lstat(relpath)
-	//logger.Info("info : ", info)
+	// Basic must validation first
+	// if fail - exit
+	if err != nil {
+		// this is Fatal, exiting right now !!!
+		logger.Fatal("Please check your config file, Walker:EntryPointPath: is invalid : ", relpath, " | ", err)
+	}
+	if !info.IsDir() {
+		// this is Fatal, exiting right now !!!
+		logger.Fatal("Please check your config file, Walker:EntryPointPath: is NOT a directory : ", relpath)
+	}
+
+	// continue here
 	err = w.walkFunc(relpath, info, err)
 	if err == filepath.SkipDir {
 		return nil
@@ -244,10 +256,6 @@ func (w *Walker) Walk(relpath string, walkFn filepath.WalkFunc) error {
 
 	if info == nil {
 		return fmt.Errorf("Broken symlink: %s", relpath)
-	}
-
-	if !info.IsDir() {
-		return ErrNotDir
 	}
 
 	// spawn workers
