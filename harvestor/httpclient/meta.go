@@ -71,7 +71,7 @@ func postMeta(upload *db.Upload) (db.Meta, error) {
 		defer resp.Body.Close()
 		// read the body
 		b, err := ioutil.ReadAll(resp.Body)
-		logger.Debug(" post meat response body : ", string(b))
+		logger.Debug(" post meta response body : ", string(b))
 		if err != nil {
 			logger.Error(" error on read body : ", err)
 			return meta, err
