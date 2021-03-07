@@ -42,7 +42,7 @@ func initHarvester() {
 	db.SetMaxIdleConns(conf.Database.MaxIdleConnections())
 	// SetConnMaxLifetime sets the maximum amount of time a connection may be reused.
 	db.SetConnMaxLifetime(time.Duration(conf.Database.MaxConnectionLifeTime()) * time.Minute)
-	// Logging DB Stats
+	// All good here
 	logger.Info("Harvester Database connected !!!")
 }
 

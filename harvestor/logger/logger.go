@@ -50,11 +50,27 @@ func NewLogger() *StandardLogger {
 
 	// Define Output for logs
 	standardLogger.SetOutput(os.Stdout)
+	// add a caller info to the logs
+	if standardLogger.GetLevel() == logrus.DebugLevel {
+		standardLogger.SetReportCaller(true)
+	}
 
-	// TODO Logging to file
-	//logFile := config.GetLoggerFile()
-	//file, err := OpenFile(logFile, O_RDWR|O_CREATE|O_APPEND, 0666)
-	//standardLogger.SetOutput(file)
+	// Define Output for logs as a file
+	//standardLogger.SetOutputFile("/tmp/harverstor.log")
 
 	return standardLogger
+}
+
+// Extra log output
+func (l *StandardLogger) SetOutputFile(filename string) {
+	// TODO
+	// need to open file in orchestrator
+	// with defer file.Close()
+	// can't close the file here
+	// the logger is global
+	file, err := os.OpenFile(filename, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 640)
+	if err != nil {
+		l.Fatal(err)
+	}
+	l.SetOutput(file)
 }
