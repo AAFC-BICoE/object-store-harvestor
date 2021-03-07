@@ -9,6 +9,6 @@ pkg/*
 
 # Files
 *.exe
-#harvestor/develop_run.sh
+*.db
 harvestor/main
 
