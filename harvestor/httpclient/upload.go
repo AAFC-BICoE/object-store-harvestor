@@ -63,7 +63,7 @@ func uplaodImage(image *db.File) (db.Upload, error) {
 		logger.Error(image.GetPath()+" Request Errors :", err)
 		return uplaod, err
 	}
-	logger.Debug("request has been created for ", image.GetPath())
+	logger.Debug("request struct has been created for ", image.GetPath())
 
 	req.Header.Set("Content-Type", writer.FormDataContentType())
 	resp, err := httpClient.Do(req)
@@ -94,13 +94,13 @@ func uplaodImage(image *db.File) (db.Upload, error) {
 		// assign a file id
 		uplaod.FileID = image.ID
 		// creating new record
-		logger.Debug("about to create upload record : ", uplaod)
 		err = db.CreateUpload(&uplaod)
+		logger.Debug("About to create upload record from response body in DB ...")
 		if err != nil {
 			logger.Error(" error on upload Create : ", err)
 			return uplaod, err
 		}
+		logger.Debug("DB upload record has been created : ", logger.PrettyGoStruct(uplaod))
 	}
-	logger.Debug("returning upload record : ", uplaod)
 	return uplaod, err
 }

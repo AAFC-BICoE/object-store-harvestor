@@ -7,6 +7,7 @@
 package logger
 
 import (
+	"encoding/json"
 	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
 	"github.com/rifflock/lfshook"
 	"github.com/sirupsen/logrus"
@@ -104,4 +105,11 @@ func NewLogger() *StandardLogger {
 	}
 
 	return standardLogger
+}
+
+// Helper function
+// Please use it only for Debug !!!
+func (s *StandardLogger) PrettyGoStruct(uglyStruct interface{}) string {
+	prettyStruct, _ := json.MarshalIndent(uglyStruct, "", "\t")
+	return string(prettyStruct)
 }

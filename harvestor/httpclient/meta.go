@@ -90,13 +90,13 @@ func postMeta(upload *db.Upload) (db.Meta, error) {
 		// assign a file id
 		meta.UploadID = upload.ID
 		// creating new record
-		logger.Debug("about to create meta record : ", meta)
+		logger.Debug("About to create meta record from response body in DB ...")
 		err = db.CreateMeta(&meta)
 		if err != nil {
 			logger.Error(" error on Upload Create : ", err)
 			return meta, err
 		}
+		logger.Debug("DB meta record has been created : ", logger.PrettyGoStruct(meta))
 	}
-	logger.Debug("returning meta record : ", meta)
 	return meta, err
 }
