@@ -2,8 +2,8 @@ package httpclient
 
 import (
 	"bytes"
-	"encoding/json"
 	c "github.com/hashicorp/go-retryablehttp"
+	"github.com/liamylian/jsontime"
 	"harvestor/config"
 	"harvestor/db"
 	l "harvestor/logger"
@@ -15,6 +15,8 @@ import (
 )
 
 func uplaodImage(image *db.File) (db.Upload, error) {
+	// custom json for all time formats
+	var json = jsontime.ConfigWithCustomTimeFormat
 	// init logger
 	var logger = l.NewLogger()
 	// init conf

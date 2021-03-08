@@ -2,7 +2,7 @@ package httpclient
 
 import (
 	"bytes"
-	"encoding/json"
+	"github.com/liamylian/jsontime"
 	"harvestor/config"
 	"harvestor/db"
 	l "harvestor/logger"
@@ -34,6 +34,8 @@ type ResponseMeta struct {
 }
 
 func postMeta(upload *db.Upload) (db.Meta, error) {
+	// custom json for all time formats
+	var json = jsontime.ConfigWithCustomTimeFormat
 	// init logger
 	var logger = l.NewLogger()
 	// init conf
