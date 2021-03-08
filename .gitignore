@@ -10,6 +10,7 @@ pkg/*
 # Files
 *.exe
 *.db
+.DS_Store
 harvestor/main
 log-test/*
 
