@@ -33,7 +33,7 @@ func uplaodImage(image *db.File) (db.Upload, error) {
 	// New multipart writer.
 	writer := multipart.NewWriter(body)
 	// create multi part for upload
-	fw, err := writer.CreateFormFile("file", image.GetPath())
+	fw, err := writer.CreateFormFile("file", image.GetName())
 
 	// validating on file open
 	logger.Debug("opening file : ", image.GetPath())
