@@ -50,7 +50,7 @@ func TestDefaultConfiguration(t *testing.T) {
 	want := true
 	fDatabase := &DatabaseConfiguration{2, 2, 30, "/tmp/db-test/harvestor.db"}
 	fWalker := &FileWalkerConfiguration{"/tmp/data-test", "jpg, png"}
-	fHttpClient := &HttpClientConfiguration{300, 2, 3, 10, "http://localhost:8081", "/api/v1/file/dev-group", "/api/v1/meta"}
+	fHttpClient := &HttpClientConfiguration{300, 2, 3, 10, "http://localhost:8081", "/api/v1/file", "dev-group", "/api/v1/metadata"}
 	fLogger := &LoggerConfiguration{"Info", "/var/logs/AAFC", "harvestor.log"}
 	fAppConfiguration := &AppConfiguration{"0.01", "harvestor", "dev"}
 

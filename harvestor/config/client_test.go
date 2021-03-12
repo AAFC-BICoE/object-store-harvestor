@@ -36,7 +36,7 @@ func TestGetUploadUri(t *testing.T) {
 	var file = "../default_harvestor_config.yml"
 	Load(file)
 	conf := GetConf()
-	want := "/api/v1/file/dev-group"
+	want := "/api/v1/file"
 	assert.Equal(t, want, conf.HttpClient.GetUploadUri())
 }
 
@@ -44,6 +44,6 @@ func TestGetMetaUri(t *testing.T) {
 	var file = "../default_harvestor_config.yml"
 	Load(file)
 	conf := GetConf()
-	want := "/api/v1/meta"
+	want := "/api/v1/metadata"
 	assert.Equal(t, want, conf.HttpClient.GetMetaUri())
 }

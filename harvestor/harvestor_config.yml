@@ -19,7 +19,8 @@ httpclient:
   RetryMax: 2 # how many times to retry
   RetryWaitMin: 3 # how many seconds to wait for retry
   baseApiUrl: "http://localhost:8081"
-  upload: "/api/v1/file/dev-group"
+  upload: "/api/v1/file"
+  uploadGroup: "dev-group"
   meta: "/api/v1/metadata"
 
 logger:

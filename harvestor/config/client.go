@@ -12,6 +12,7 @@ type HttpClientConfiguration struct {
 	MaxIdleConnections int
 	BaseApiUrl         string
 	Upload             string
+	UploadGroup        string
 	Meta               string
 }
 
@@ -23,14 +24,9 @@ type IHttpClientConfiguration interface {
 	GetMaxIdleConnections() int
 	GetBaseApiUrl() string
 	GetUploadUri() string
+	GetUploadGroup() string
 	GetMetaUri() string
 }
-
-/*
-   httpClient.RetryMax = conf.HttpClient.GetRetryMax()
-   httpClient.RetryWaitMin = conf.HttpClient.GetRetryWaitMin()
-   httpClient.HTTPClient.Timeout = time.Second * 10
-*/
 
 // Implementation
 func (h HttpClientConfiguration) GetTimeOut() int {
@@ -55,6 +51,10 @@ func (h HttpClientConfiguration) GetBaseApiUrl() string {
 
 func (h HttpClientConfiguration) GetUploadUri() string {
 	return h.Upload
+}
+
+func (h HttpClientConfiguration) GetUploadGroup() string {
+	return h.UploadGroup
 }
 
 func (h HttpClientConfiguration) GetMetaUri() string {

@@ -25,7 +25,10 @@ func uplaodImage(image *db.File) (db.Upload, error) {
 	var uplaod db.Upload
 
 	// define full resource URL
-	url := conf.HttpClient.GetBaseApiUrl() + conf.HttpClient.GetUploadUri()
+	url := conf.HttpClient.GetBaseApiUrl() +
+		conf.HttpClient.GetUploadUri() +
+		"/" +
+		conf.HttpClient.GetUploadGroup()
 	logger.Debug("post upload url : ", url)
 
 	// allocate a buffer
