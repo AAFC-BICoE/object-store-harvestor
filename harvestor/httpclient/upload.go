@@ -71,6 +71,8 @@ func uplaodImage(image *db.File) (db.Upload, error) {
 	logger.Debug("request struct has been created for ", image.GetPath())
 
 	req.Header.Set("Content-Type", writer.FormDataContentType())
+	// custom header for https://www.crnk.io/releases/stable/documentation/
+	req.Header.Set("crnk-compact", "true")
 	resp, err := httpClient.Do(req)
 	if err != nil {
 		logger.Error(image.GetPath()+" POST Errors :", err)

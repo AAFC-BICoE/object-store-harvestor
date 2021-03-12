@@ -2,6 +2,7 @@ package httpclient
 
 import (
 	"bytes"
+	c "github.com/hashicorp/go-retryablehttp"
 	"github.com/liamylian/jsontime"
 	"harvestor/config"
 	"harvestor/db"
@@ -62,11 +63,20 @@ func postMeta(upload *db.Upload) (db.Meta, error) {
 		return meta, err
 	}
 
-	resp, err := httpClient.Post(url, "application/vnd.api+json", bytes.NewBuffer(payload))
+	req, err := c.NewRequest("POST", url, bytes.NewBuffer(payload))
+	if err != nil {
+		logger.Error(" New request Errors :", err)
+		return meta, err
+	}
+	req.Header.Set("Content-Type", "application/vnd.api+json")
+	// custom header for https://www.crnk.io/releases/stable/documentation/
+	req.Header.Set("crnk-compact", "true")
+	resp, err := httpClient.Do(req)
 	if err != nil {
 		logger.Error(" post meta fail details :", err)
 		return meta, err
 	}
+
 	// Check on response status 201
 	if resp.StatusCode == http.StatusCreated {
 		// close the body when done
