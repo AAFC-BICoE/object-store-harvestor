@@ -8,8 +8,9 @@ type KeycloakConfiguration struct {
 	UserPassword   string
 	GrantType      string
 	RealmName      string
-	Debug          bool
 	NewTokenBefore int
+	Debug          bool
+	Enabled        bool
 }
 
 // Define all interfaces for this struct
@@ -20,8 +21,9 @@ type IKeycloakConfiguration interface {
 	GetUserPassword() string
 	GetRealmName() string
 	GetGrantType() string
-	IsDebug() bool
 	GetNewTokenBefore() int
+	IsDebug() bool
+	IsEnabled() bool
 }
 
 // Implementation
@@ -49,10 +51,14 @@ func (k KeycloakConfiguration) GetGrantType() string {
 	return k.GrantType
 }
 
+func (k KeycloakConfiguration) GetNewTokenBefore() int {
+	return k.NewTokenBefore
+}
+
 func (k KeycloakConfiguration) IsDebug() bool {
 	return k.Debug
 }
 
-func (k KeycloakConfiguration) GetNewTokenBefore() int {
-	return k.NewTokenBefore
+func (k KeycloakConfiguration) IsEnabled() bool {
+	return k.Enabled
 }

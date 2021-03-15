@@ -32,8 +32,12 @@ keycloak:
   userPassword: "user"
   grantType: "password"
   realmName: "dina"
-  newTokenBefore: 10 # 10 seconds before Access token expires need to get new one 
+  newTokenBefore: 280 # 10 seconds before Access token expires need to get new one 
   debug: false
+  # !!! Important !!!
+  # set to `false` from current `true` only if you are running against dev
+  # otherwise it will always fail with 401 - Status Unauthorized
+  enabled: true
 
 logger:
   level: "Info"

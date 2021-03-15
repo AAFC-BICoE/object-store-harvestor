@@ -18,6 +18,8 @@ var keycloak gocloak.GoCloak
 // JWT token
 var token *gocloak.JWT
 
+// initial login on behalf of an admin clien
+// and first Keycloak init
 func getNewKeycloak() {
 	// Getting config
 	conf := config.GetConf()

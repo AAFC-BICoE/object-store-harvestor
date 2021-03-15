@@ -69,9 +69,11 @@ func postMeta(upload *db.Upload) (db.Meta, error) {
 		return meta, err
 	}
 	req.Header.Set("Content-Type", "application/vnd.api+json")
-
-	var bearer = "Bearer " + GetAccessToken()
-	req.Header.Add("Authorization", bearer)
+	// check if we need Authorization
+	if conf.Keycloak.IsEnabled() {
+		var bearer = "Bearer " + GetAccessToken()
+		req.Header.Set("Authorization", bearer)
+	}
 	// custom header for https://www.crnk.io/releases/stable/documentation/
 	req.Header.Add("crnk-compact", "true")
 
@@ -80,7 +82,15 @@ func postMeta(upload *db.Upload) (db.Meta, error) {
 		logger.Error(" post meta fail details :", err)
 		return meta, err
 	}
-
+	// TODO Maybe we need a common package for HTTP response status codes
+	// Check on response status 401
+	if resp.StatusCode == http.StatusUnauthorized {
+		logger.Fatal("Error : You are Unauthorized for MetaData, Please check your config file")
+	}
+	// Check on response status 403
+	if resp.StatusCode == http.StatusForbidden {
+		logger.Fatal("Error : You are Forbidden from MetaData, Please check your config file")
+	}
 	// Check on response status 201
 	if resp.StatusCode == http.StatusCreated {
 		// close the body when done
@@ -113,6 +123,15 @@ func postMeta(upload *db.Upload) (db.Meta, error) {
 			return meta, err
 		}
 		logger.Debug("DB meta record has been created : ", logger.PrettyGoStruct(meta))
+	} else {
+		// all other use cases are not allowed
+		// app has to stop
+		// something is really not right here
+		b, err := io.ReadAll(resp.Body)
+		if err != nil {
+			logger.Fatal(" error on read body : ", err)
+		}
+		logger.Fatal("Error : Status code : (", resp.StatusCode, ") details : ", string(b))
 	}
 	return meta, err
 }
