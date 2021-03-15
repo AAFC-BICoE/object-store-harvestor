@@ -11,12 +11,14 @@ import (
 
 // watching ExpiresIn on the token
 var start time.Time
+
+// Keycloak client
 var keycloak gocloak.GoCloak
+
+// JWT token
 var token *gocloak.JWT
 
 func getNewKeycloak() {
-	// init start time when we get first token
-	start = time.Now()
 	// Getting config
 	conf := config.GetConf()
 	// Getting logger
@@ -32,26 +34,29 @@ func getNewKeycloak() {
 	// now you can reference `keycloak` as a domain in your calls
 	logger.Info("About to init new Keycloak ...")
 	keycloak = gocloak.NewClient(conf.Keycloak.GetHost())
+	// Configure gocloak to skip TLS Insecure Verification
 	restyClient := keycloak.RestyClient()
 	restyClient.SetDebug(conf.Keycloak.IsDebug())
 	restyClient.SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true})
+	// All good here
 	logger.Info("New Keycloak has been init !!!")
 
 	// Lets login on behalf of an admin client
 	var err error
 	ctx := context.Background()
 	logger.Info("About to login on behalf of an admin client ...")
-	token, err = DinaLogin(ctx, "user", "user", "dina")
+	token, err = DinaLogin(
+		ctx,
+		conf.Keycloak.GetUserName(),
+		conf.Keycloak.GetUserPassword(),
+		conf.Keycloak.GetRealmName())
 	if err != nil {
 		logger.Fatal("Something wrong with the credentials or url", err)
 	}
+	// init start time when we get first token after successful login
+	start = time.Now()
 
 	logger.Info("login on behalf of an admin client success !!!")
-
-	//logger.Info("token.AccessToken is : ", token.AccessToken)
-	//logger.Info("token.ExpiresIn is : ", token.ExpiresIn)
-	//logger.Info("token.RefreshToken is : ", token.RefreshToken)
-	//logger.Info("token.RefreshExpiresIn is : ", token.RefreshExpiresIn)
 }
 
 // GetAccessToken for the request header

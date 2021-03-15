@@ -71,7 +71,6 @@ func uplaodImage(image *db.File) (db.Upload, error) {
 
 	req.Header.Set("Content-Type", writer.FormDataContentType())
 	var bearer = "Bearer " + GetAccessToken()
-	logger.Debug("bearer : ", bearer)
 	req.Header.Add("Authorization", bearer)
 	// custom header for https://www.crnk.io/releases/stable/documentation/
 	req.Header.Add("crnk-compact", "true")

@@ -18,5 +18,6 @@ func Run() {
 	logger.Info("Orchestrator has finished the run !!!")
 	t := time.Now()
 	elapsed := t.Sub(start)
-	logger.Debug("harvestor took : ", elapsed)
+	logger.Debug("= = = = = = = = D O N E = = = = = = = =")
+	logger.Debug("app harvestor is done and it took : ", elapsed)
 }

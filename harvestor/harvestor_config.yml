@@ -28,7 +28,10 @@ keycloak:
   # Please read all comments in httpclient/keycloak.go before running
   host: "http://keycloak:8080"
   adminClientID: "objectstore"
+  userName: "user"
+  userPassword: "user"
   grantType: "password"
+  realmName: "dina"
   newTokenBefore: 10 # 10 seconds before Access token expires need to get new one 
   debug: false
 

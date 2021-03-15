@@ -72,7 +72,6 @@ func postMeta(upload *db.Upload) (db.Meta, error) {
 
 	var bearer = "Bearer " + GetAccessToken()
 	req.Header.Add("Authorization", bearer)
-	logger.Debug("bearer : ", bearer)
 	// custom header for https://www.crnk.io/releases/stable/documentation/
 	req.Header.Add("crnk-compact", "true")
 
