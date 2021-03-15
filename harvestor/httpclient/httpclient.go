@@ -24,6 +24,10 @@ func InitHttpClient() {
 func Run() {
 	var files []db.File
 	db.GetNewFiles(&files)
+	logger := l.NewLogger()
+	if len(files) == 0 {
+		logger.Info("No new files. Harvester Http Client has nothing to upload !!!")
+	}
 	for _, file := range files {
 		upload, err := uplaodImage(&file)
 		// if all good set the status of the file as "uploaded"
@@ -36,5 +40,4 @@ func Run() {
 			}
 		}
 	}
-
 }

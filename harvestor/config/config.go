@@ -20,6 +20,7 @@ type Configuration struct {
 	Database   DatabaseConfiguration   // SQLite DB config
 	Walker     FileWalkerConfiguration // Media File walker config
 	HttpClient HttpClientConfiguration // Http Client config
+	Keycloak   KeycloakConfiguration   // Keycloak config
 	Logger     LoggerConfiguration     // Logger config
 	App        AppConfiguration        // App config
 }

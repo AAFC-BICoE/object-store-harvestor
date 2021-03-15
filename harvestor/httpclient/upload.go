@@ -8,7 +8,6 @@ import (
 	"harvestor/db"
 	l "harvestor/logger"
 	"io"
-	"io/ioutil"
 	"mime/multipart"
 	"net/http"
 	"os"
@@ -71,8 +70,12 @@ func uplaodImage(image *db.File) (db.Upload, error) {
 	logger.Debug("request struct has been created for ", image.GetPath())
 
 	req.Header.Set("Content-Type", writer.FormDataContentType())
+	var bearer = "Bearer " + GetAccessToken()
+	logger.Debug("bearer : ", bearer)
+	req.Header.Add("Authorization", bearer)
 	// custom header for https://www.crnk.io/releases/stable/documentation/
-	req.Header.Set("crnk-compact", "true")
+	req.Header.Add("crnk-compact", "true")
+
 	resp, err := httpClient.Do(req)
 	if err != nil {
 		logger.Error(image.GetPath()+" POST Errors :", err)
@@ -85,7 +88,8 @@ func uplaodImage(image *db.File) (db.Upload, error) {
 		// close the body when done
 		defer resp.Body.Close()
 		// read the body
-		b, err := ioutil.ReadAll(resp.Body)
+		//b, err := ioutil.ReadAll(resp.Body)
+		b, err := io.ReadAll(resp.Body)
 		if err != nil {
 			logger.Error(" error on read body : ", err)
 			return uplaod, err
@@ -108,6 +112,13 @@ func uplaodImage(image *db.File) (db.Upload, error) {
 			return uplaod, err
 		}
 		logger.Debug("DB upload record has been created : ", logger.PrettyGoStruct(uplaod))
+	} else {
+		// something really wrong here
+		b, err := io.ReadAll(resp.Body)
+		if err != nil {
+			logger.Fatal(" error on read body : ", err)
+		}
+		logger.Fatal("Error : ", string(b))
 	}
 	return uplaod, err
 }

@@ -7,7 +7,7 @@ import (
 	"harvestor/config"
 	"harvestor/db"
 	l "harvestor/logger"
-	"io/ioutil"
+	"io"
 	"net/http"
 )
 
@@ -69,8 +69,13 @@ func postMeta(upload *db.Upload) (db.Meta, error) {
 		return meta, err
 	}
 	req.Header.Set("Content-Type", "application/vnd.api+json")
+
+	var bearer = "Bearer " + GetAccessToken()
+	req.Header.Add("Authorization", bearer)
+	logger.Debug("bearer : ", bearer)
 	// custom header for https://www.crnk.io/releases/stable/documentation/
-	req.Header.Set("crnk-compact", "true")
+	req.Header.Add("crnk-compact", "true")
+
 	resp, err := httpClient.Do(req)
 	if err != nil {
 		logger.Error(" post meta fail details :", err)
@@ -82,7 +87,7 @@ func postMeta(upload *db.Upload) (db.Meta, error) {
 		// close the body when done
 		defer resp.Body.Close()
 		// read the body
-		b, err := ioutil.ReadAll(resp.Body)
+		b, err := io.ReadAll(resp.Body)
 		logger.Debug(" post meta response body : ", string(b))
 		if err != nil {
 			logger.Error(" error on read body : ", err)
