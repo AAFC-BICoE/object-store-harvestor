@@ -13,16 +13,16 @@ logger:
 */
 
 func TestGetLevel(t *testing.T) {
-	var file = "../harvestor_config.yml"
+	var file = "../default_harvestor_config.yml"
 	Load(file)
 	conf := GetConf()
-	want := "debug"
+	want := "info"
 	assert.Equal(t, want, conf.Logger.GetLevel())
 
 }
 
 func TestGetPath(t *testing.T) {
-	var file = "../harvestor_config.yml"
+	var file = "../default_harvestor_config.yml"
 	Load(file)
 	conf := GetConf()
 	want := "/var/logs/AAFC"
@@ -30,7 +30,7 @@ func TestGetPath(t *testing.T) {
 }
 
 func TestGetFile(t *testing.T) {
-	var file = "../harvestor_config.yml"
+	var file = "../default_harvestor_config.yml"
 	Load(file)
 	conf := GetConf()
 	want := "harvestor.log"

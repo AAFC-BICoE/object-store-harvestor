@@ -1,0 +1,34 @@
+database:
+  # Number of max Open connections to SQLite DB
+  maxOpenConns: 2
+  # Number of max Idle connections to SQLite DB
+  maxIdleConns: 2 
+  # Number of minutes connection will live
+  connMaxLifetime: 30
+  # Path to SQLite DB
+  dbFile: "/tmp/db-test/harvestor.db"
+
+walker:
+  # File walker root path for media files
+  EntryPointPath: "/tmp/data-test"
+  FilesOfInterest: "jpg, png"
+
+httpclient:
+  timeOut: 300
+  maxIdleConnections: 10 
+  RetryMax: 2 # how many times to retry
+  RetryWaitMin: 3 # how many seconds to wait for retry
+  baseApiUrl: "http://localhost:8081"
+  upload: "/api/v1/file"
+  uploadGroup: "dev-group"
+  meta: "/api/v1/metadata"
+
+logger:
+  level: "Info"
+  path: "/var/logs/AAFC"
+  file: "harvestor.log"
+
+app:
+  release: "0.01"
+  name: "harvestor"
+  env: "dev"

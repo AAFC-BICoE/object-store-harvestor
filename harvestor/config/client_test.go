@@ -16,7 +16,7 @@ httpclient:
 */
 
 func TestGetTimeOut(t *testing.T) {
-	var file = "../harvestor_config.yml"
+	var file = "../default_harvestor_config.yml"
 	Load(file)
 	conf := GetConf()
 	want := 300
@@ -25,17 +25,25 @@ func TestGetTimeOut(t *testing.T) {
 }
 
 func TestGetBaseApiUrl(t *testing.T) {
-	var file = "../harvestor_config.yml"
+	var file = "../default_harvestor_config.yml"
 	Load(file)
 	conf := GetConf()
-	want := "http://localhost:8080"
+	want := "http://localhost:8081"
 	assert.Equal(t, want, conf.HttpClient.GetBaseApiUrl())
 }
 
-func TestGetUri(t *testing.T) {
-	var file = "../harvestor_config.yml"
+func TestGetUploadUri(t *testing.T) {
+	var file = "../default_harvestor_config.yml"
 	Load(file)
 	conf := GetConf()
-	want := "/api/v1/object"
-	assert.Equal(t, want, conf.HttpClient.GetUri())
+	want := "/api/v1/file"
+	assert.Equal(t, want, conf.HttpClient.GetUploadUri())
+}
+
+func TestGetMetaUri(t *testing.T) {
+	var file = "../default_harvestor_config.yml"
+	Load(file)
+	conf := GetConf()
+	want := "/api/v1/metadata"
+	assert.Equal(t, want, conf.HttpClient.GetMetaUri())
 }

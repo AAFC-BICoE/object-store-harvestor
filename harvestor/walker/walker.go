@@ -18,31 +18,24 @@ func Run() {
 	// Create new logger
 	var logger = l.NewLogger()
 	conf := config.GetConf()
-	logger.Info("Harvester Walker is about to scan : ", conf.Walker.Path())
-	err := Walk(conf.Walker.Path(), walkFunc)
+	logger.Info("Harvester Walker:EntryPointPath: `", conf.Walker.Path(), "`")
+	err := WalkWithSymlinks(conf.Walker.Path(), walkFunc)
 	if err != nil {
-		logger.Error("Harvester Walker scan ERROR:", err)
+		logger.Error("Harvester Walker ERROR:", err)
 	}
 
 }
 
 func walkFunc(path string, info os.FileInfo, err error) error {
 	var logger = l.NewLogger()
+	logger.Debug("walker path :", path)
 	if !info.IsDir() && isInterest(info) {
 		var fr db.File
 		err := fr.Create(path, info)
 		if err != nil {
-			logger.Error("||| DB create err :", err)
+			logger.Error("Walker:File:Create :", err)
 		}
-		// Debug
-		//logger.Info("||| fr :", fr)
-		//Create
-		//logger.Info("= = = = = = = = = = = = = = = = = = = = = =")
-		//logger.Info("||| path :", path)
-		//logger.Info("info.Name() :", info.Name())
-		//logger.Info("info.Size() :", info.Size())
-		//logger.Info("info.ModTime() : ", info.ModTime())
-		//logger.Info("info.IsDir() :", info.IsDir())
+		logger.Debug("Walker:File found :", path)
 	}
 	return err
 }
@@ -231,6 +224,7 @@ func (w *Walker) worker() {
 // calling walkFn for each file or directory
 // in the tree, including the root directory.
 func (w *Walker) Walk(relpath string, walkFn filepath.WalkFunc) error {
+	var logger = l.NewLogger()
 	//var logger = l.NewLogger()
 	w.errors = make(chan WalkerError, BufferSize)
 	w.jobs = make(chan string, BufferSize)
@@ -240,7 +234,18 @@ func (w *Walker) Walk(relpath string, walkFn filepath.WalkFunc) error {
 	go w.collectErrors()
 
 	info, err := w.lstat(relpath)
-	//logger.Info("info : ", info)
+	// Basic must validation first
+	// if fail - exit
+	if err != nil {
+		// this is Fatal, exiting right now !!!
+		logger.Fatal("Please check your config file, Walker:EntryPointPath: is invalid : ", relpath, " | ", err)
+	}
+	if !info.IsDir() {
+		// this is Fatal, exiting right now !!!
+		logger.Fatal("Please check your config file, Walker:EntryPointPath: is NOT a directory : ", relpath)
+	}
+
+	// continue here
 	err = w.walkFunc(relpath, info, err)
 	if err == filepath.SkipDir {
 		return nil
@@ -251,10 +256,6 @@ func (w *Walker) Walk(relpath string, walkFn filepath.WalkFunc) error {
 
 	if info == nil {
 		return fmt.Errorf("Broken symlink: %s", relpath)
-	}
-
-	if !info.IsDir() {
-		return ErrNotDir
 	}
 
 	// spawn workers
@@ -302,17 +303,20 @@ func getFileExtension(filename string) string {
 // check if we are interested in the current file
 func isInterest(info os.FileInfo) bool {
 	conf := config.GetConf()
-	interest := strings.Split(conf.Walker.Interest(), ",")
+	var logger = l.NewLogger()
+	prep := strings.Replace(conf.Walker.Interest(), ",", " ", -1)
+	interest := strings.Fields(prep)
+	logger.Debug("files of interest : ", interest)
+	logger.Debug("current file extension : ", getFileExtension(info.Name()))
 	return contains(interest, getFileExtension(info.Name()))
 }
 
 // check if the string is in the slice
-func contains(s []string, str string) bool {
-	for _, v := range s {
-		if v == str {
+func contains(a []string, x string) bool {
+	for _, n := range a {
+		if x == n {
 			return true
 		}
 	}
-
 	return false
 }
