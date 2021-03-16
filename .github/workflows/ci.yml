@@ -12,6 +12,7 @@ jobs:
         uses: actions/setup-go@v2
 
       - name: Install dependencies
+        working-directory: ./harvestor
         run: |
           go mod tidy
 
