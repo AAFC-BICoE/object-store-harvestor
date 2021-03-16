@@ -16,7 +16,7 @@ jobs:
         run: |
           go mod tidy
 
-      - name: setup coverprofile
+      - name: Test with coverage
         working-directory: ./harvestor
         run: |
           go test ./... -v -cover
