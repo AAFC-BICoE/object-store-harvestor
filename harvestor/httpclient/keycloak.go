@@ -68,6 +68,7 @@ func GetAccessToken() string {
 		getNewKeycloak()
 		return token.AccessToken
 	}
+	// check existing token and renew if it is about to expire
 	checkToken()
 	return token.AccessToken
 }

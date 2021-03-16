@@ -3,6 +3,24 @@
 # exit when any command fails
 set -e
 
+###############################################################
+# Validation
+# This is a guard to prevent running incorrect golang versions
+###############################################################
+required_golang="1.16"
+v=`go version | { read _ _ v _; echo ${v#go}; }`
+if [[ $v =~ $required_golang ]]; then
+   echo "go version is good and is : $v"
+else
+   echo "= = = = = = = = = = = = = = = = = = = = = = = "
+   echo "This application requires golang version 1.16+"
+   echo "Current golang version is $v"
+   echo "Please upgrade golang to version 1.16+"
+   echo "= = = = = = = = = = = = = = = = = = = = = = = "
+   exit 1
+fi
+###############################################################
+
 # clean up
 rm -fr /tmp/db-test
 echo "/tmp/db-test has been removed ..."
