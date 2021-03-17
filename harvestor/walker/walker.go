@@ -23,6 +23,7 @@ func Run() {
 	if err != nil {
 		logger.Error("Harvester Walker ERROR:", err)
 	}
+	logger.Info("Harvester Walker has completed the walk in `", conf.Walker.Path(), "`")
 
 }
 

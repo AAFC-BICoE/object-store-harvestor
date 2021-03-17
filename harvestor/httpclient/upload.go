@@ -8,7 +8,6 @@ import (
 	"harvestor/db"
 	l "harvestor/logger"
 	"io"
-	"io/ioutil"
 	"mime/multipart"
 	"net/http"
 	"os"
@@ -71,8 +70,14 @@ func uplaodImage(image *db.File) (db.Upload, error) {
 	logger.Debug("request struct has been created for ", image.GetPath())
 
 	req.Header.Set("Content-Type", writer.FormDataContentType())
+	// check if we need Authorization
+	if conf.Keycloak.IsEnabled() {
+		var bearer = "Bearer " + GetAccessToken()
+		req.Header.Set("Authorization", bearer)
+	}
 	// custom header for https://www.crnk.io/releases/stable/documentation/
-	req.Header.Set("crnk-compact", "true")
+	req.Header.Add("crnk-compact", "true")
+
 	resp, err := httpClient.Do(req)
 	if err != nil {
 		logger.Error(image.GetPath()+" POST Errors :", err)
@@ -80,12 +85,22 @@ func uplaodImage(image *db.File) (db.Upload, error) {
 	}
 	logger.Debug("POST request has been made to : ", url)
 	logger.Debug("Response Status Code : ", resp.StatusCode)
+	// TODO Maybe we need a common package for HTTP response status codes
+	// Check on response status 401
+	if resp.StatusCode == http.StatusUnauthorized {
+		logger.Fatal("Error : You are Unauthorized for Uploading, Please check your config file")
+	}
+	// Check on response status 403
+	if resp.StatusCode == http.StatusForbidden {
+		logger.Fatal("Error : You are Forbidden from Uploading, Please check your config file")
+	}
 	// Check on response status 200
 	if resp.StatusCode == http.StatusOK {
 		// close the body when done
 		defer resp.Body.Close()
 		// read the body
-		b, err := ioutil.ReadAll(resp.Body)
+		//b, err := ioutil.ReadAll(resp.Body)
+		b, err := io.ReadAll(resp.Body)
 		if err != nil {
 			logger.Error(" error on read body : ", err)
 			return uplaod, err
@@ -108,6 +123,15 @@ func uplaodImage(image *db.File) (db.Upload, error) {
 			return uplaod, err
 		}
 		logger.Debug("DB upload record has been created : ", logger.PrettyGoStruct(uplaod))
+	} else {
+		// all other use cases are not allowed
+		// app has to stop
+		// something is really not right here
+		b, err := io.ReadAll(resp.Body)
+		if err != nil {
+			logger.Fatal(" error on read body : ", err)
+		}
+		logger.Fatal("Error : Status code : (", resp.StatusCode, ") details : ", string(b))
 	}
 	return uplaod, err
 }
