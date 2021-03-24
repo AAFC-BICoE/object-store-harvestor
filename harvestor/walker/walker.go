@@ -30,13 +30,17 @@ func Run() {
 func walkFunc(path string, info os.FileInfo, err error) error {
 	var logger = l.NewLogger()
 	logger.Debug("walker path :", path)
-	if !info.IsDir() && isInterest(info) {
-		var fr db.File
-		err := fr.Create(path, info)
+	if !info.IsDir() &&
+		isInterest(info) &&
+		HasSideCard(path) {
+		file, err := db.CreateFile(path, info)
+		logger.Info("File :", file)
 		if err != nil {
 			logger.Error("Walker:File:Create :", err)
 		}
 		logger.Debug("Walker:File found :", path)
+		CreateSideCardByFile(file)
+
 	}
 	return err
 }
@@ -301,10 +305,38 @@ func getFileExtension(filename string) string {
 	return strings.ToLower(strings.TrimPrefix(filepath.Ext(filename), "."))
 }
 
+func getSideCardPath(path string) string {
+	base := strings.TrimSuffix(path, filepath.Ext(path))
+	return base + ".yml"
+}
+
+// check if we are interested in the current file
+func hasSideCard(path string) bool {
+	// init logger
+	var logger = l.NewLogger()
+	// init conf
+	conf := config.GetConf()
+	sideCardAbsolutePath := getSideCardPath(
+		conf.Walker.Path() + string(os.PathSeparator) + path)
+	logger.Debug("sideCardAbsolutePath : ", sideCardAbsolutePath)
+	_, err := os.Lstat(sideCardAbsolutePath)
+	if err != nil {
+		return false
+	}
+	return true
+}
+
 // check if we are interested in the current file
 func isInterest(info os.FileInfo) bool {
-	conf := config.GetConf()
+	// never consider yml files
+	if getFileExtension(info.Name()) == "yml" {
+		return false
+	}
+	// init logger
 	var logger = l.NewLogger()
+	// init conf
+	conf := config.GetConf()
+
 	prep := strings.Replace(conf.Walker.Interest(), ",", " ", -1)
 	interest := strings.Fields(prep)
 	logger.Debug("files of interest : ", interest)

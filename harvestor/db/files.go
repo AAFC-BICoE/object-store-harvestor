@@ -26,7 +26,7 @@ type IFile interface {
 	GetStatus() string
 	GetCreatedAt() time.Time
 	GetUpdatedAt() time.Time
-	Create(path string, info os.FileInfo) error
+	CreateFile(path string, info os.FileInfo) (*File, error)
 }
 
 // Implementation
@@ -58,7 +58,8 @@ func (f File) GetUpdatedAt() time.Time {
 	return f.UpdatedAt
 }
 
-func (f File) Create(path string, info os.FileInfo) error {
+func CreateFile(path string, info os.FileInfo) (*File, error) {
+	var f File
 	// get logger
 	var logger = l.NewLogger()
 	// get config
@@ -80,13 +81,14 @@ func (f File) Create(path string, info os.FileInfo) error {
 		if err != nil {
 			errMsg := "File record CAN NOT be stored in DB for :"
 			logger.Error(errMsg, f.GetPath(), err)
-			return err
+			return &f, err
 		}
 		logger.Info("File record has been stored in DB for :", f.GetPath())
 		logger.Debug("DB File record : ", logger.PrettyGoStruct(f))
-		return err
+		logger.Info("File record in DB for :", logger.PrettyGoStruct(f))
+		return &f, err
 	}
-	return nil
+	return &f, nil
 }
 
 // After upload change status from "new" to "complete"

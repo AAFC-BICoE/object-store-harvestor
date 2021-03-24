@@ -8,6 +8,13 @@ database:
   # Path to SQLite DB
   dbFile: "/tmp/db-test/harvestor.db"
 
+# yml file for each image
+sidecard:
+  # log level
+  debug: false
+  # on/off
+  enabled: false
+
 walker:
   # File walker root path for media files
   EntryPointPath: "/tmp/data-test"
@@ -20,6 +27,7 @@ httpclient:
   RetryWaitMin: 3 # how many seconds to wait for retry
   baseApiUrl: "http://localhost:8081"
   upload: "/api/v1/file"
+  #uploadGroup: "dev-group"
   uploadGroup: "aafc"
   meta: "/api/v1/metadata"
 
