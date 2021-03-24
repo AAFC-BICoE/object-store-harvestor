@@ -34,7 +34,6 @@ func walkFunc(path string, info os.FileInfo, err error) error {
 		isInterest(info) &&
 		HasSideCard(path) {
 		file, err := db.CreateFile(path, info)
-		logger.Info("File :", file)
 		if err != nil {
 			logger.Error("Walker:File:Create :", err)
 		}
