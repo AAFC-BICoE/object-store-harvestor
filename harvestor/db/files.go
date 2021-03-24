@@ -85,7 +85,6 @@ func CreateFile(path string, info os.FileInfo) (*File, error) {
 		}
 		logger.Info("File record has been stored in DB for :", f.GetPath())
 		logger.Debug("DB File record : ", logger.PrettyGoStruct(f))
-		logger.Info("File record in DB for :", logger.PrettyGoStruct(f))
 		return &f, err
 	}
 	return &f, nil
