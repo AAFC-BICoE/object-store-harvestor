@@ -1,7 +1,7 @@
 package orchestrator
 
 import (
-	"harvestor/httpclient"
+	_ "harvestor/httpclient"
 	l "harvestor/logger"
 	"harvestor/walker"
 	"time"
@@ -14,7 +14,7 @@ func Run() {
 	var logger = l.NewLogger()
 	logger.Info("Orchestrator is about to run ...")
 	walker.Run()
-	httpclient.Run()
+	//httpclient.Run()
 	logger.Info("Orchestrator has finished the run !!!")
 	t := time.Now()
 	elapsed := t.Sub(start)

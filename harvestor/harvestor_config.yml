@@ -13,7 +13,7 @@ sidecard:
   # log level
   debug: false
   # on/off
-  enabled: true
+  enabled: false
 
 walker:
   # File walker root path for media files

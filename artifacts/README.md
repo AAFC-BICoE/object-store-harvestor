@@ -1,3 +1,0 @@
-# object-store-harvestor
-
-TODO

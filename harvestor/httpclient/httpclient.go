@@ -54,7 +54,10 @@ func processNewFile(file *db.File) {
 		_, err := postMeta(&upload)
 		// if all good set the status of the file as "completed"
 		if err == nil {
-			db.SetFileStatus(file, "completed")
+			_, err := postManagedMeta(file)
+			if err == nil {
+				db.SetFileStatus(file, "completed")
+			}
 		}
 	}
 }
