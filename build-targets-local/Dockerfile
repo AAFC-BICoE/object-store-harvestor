@@ -29,9 +29,10 @@ RUN go tool cover -html=cover.out -o /tmp/cover.html
 ENV GOOS=linux
 ENV GOARCH=amd64
 RUN go build -tags netgo -ldflags '-extldflags "-static"' -o main .
-ENV GOOS=windows
-ENV GOARCH=amd64
-RUN go build -tags netgo -ldflags '-H=windowsgui -extldflags "-static"' -o main.exe .
+# For now no Windows image to speed up
+# ENV GOOS=windows
+# ENV GOARCH=amd64
+# RUN go build -tags netgo -ldflags '-H=windowsgui -extldflags "-static"' -o main.exe .
 
 # - - - LOCAL - - - #
 # Pushing Artifact to local
