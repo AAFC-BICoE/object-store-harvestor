@@ -9,11 +9,11 @@ database:
   dbFile: "/tmp/db-test/harvestor.db"
 
 # yml file for each image
-sidecard:
+sidecar:
   # log level
   debug: false
   # on/off
-  enabled: false
+  enabled: true
 
 walker:
   # File walker root path for media files
@@ -28,20 +28,24 @@ httpclient:
   baseApiUrl: "http://localhost:8081"
   upload: "/api/v1/file"
   #uploadGroup: "dev-group"
-  uploadGroup: "aafc"
+  #uploadGroup: "aafc"
+  uploadGroup: "cnc"
   meta: "/api/v1/metadata"
+  managedmeta: "/api/v1/managed-attribute-map"
 
 keycloak:
   # !!! Important !!!
   # Please read all comments in httpclient/keycloak.go before running
   host: "http://keycloak:8080"
   adminClientID: "objectstore"
-  userName: "user"
-  userPassword: "user"
+  userName: "cnc-cm"
+  userPassword: "cnc-cm"
+    #userName: "user"
+    #userPassword: "user"
   grantType: "password"
   realmName: "dina"
   newTokenBefore: 15 # 15 seconds before Access token expires need to get new one 
-  debug: false
+  debug: true
   # !!! Important !!!
   # set to `false` from current `true` only if you are running against dev
   # otherwise it will always fail with 401 - Status Unauthorized

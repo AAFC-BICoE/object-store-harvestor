@@ -15,8 +15,9 @@ import (
 
 // entry point for external calls
 func Run() {
-	// Create new logger
+	// init logger
 	var logger = l.NewLogger()
+	// init conf
 	conf := config.GetConf()
 	logger.Info("Harvester Walker:EntryPointPath: `", conf.Walker.Path(), "`")
 	err := WalkWithSymlinks(conf.Walker.Path(), walkFunc)
@@ -28,17 +29,20 @@ func Run() {
 }
 
 func walkFunc(path string, info os.FileInfo, err error) error {
+	// init logger
 	var logger = l.NewLogger()
-	logger.Debug("walker path :", path)
+	absolutePath := getAbsolutePath(path)
+	logger.Debug("walker absolutePath :", absolutePath)
 	if !info.IsDir() &&
 		isInterest(info) &&
-		HasSideCard(path) {
+		HasSideCar(absolutePath) {
 		file, err := db.CreateFile(path, info)
 		if err != nil {
 			logger.Error("Walker:File:Create :", err)
 		}
-		logger.Debug("Walker:File found :", path)
-		CreateSideCardByFile(file)
+		logger.Debug("Walker:File created a file for path :", path)
+		// all good here, need to create a SideCar
+		CreateSideCarByFile(file)
 
 	}
 	return err
@@ -304,27 +308,6 @@ func getFileExtension(filename string) string {
 	return strings.ToLower(strings.TrimPrefix(filepath.Ext(filename), "."))
 }
 
-func getSideCardPath(path string) string {
-	base := strings.TrimSuffix(path, filepath.Ext(path))
-	return base + ".yml"
-}
-
-// check if we are interested in the current file
-func hasSideCard(path string) bool {
-	// init logger
-	var logger = l.NewLogger()
-	// init conf
-	conf := config.GetConf()
-	sideCardAbsolutePath := getSideCardPath(
-		conf.Walker.Path() + string(os.PathSeparator) + path)
-	logger.Debug("sideCardAbsolutePath : ", sideCardAbsolutePath)
-	_, err := os.Lstat(sideCardAbsolutePath)
-	if err != nil {
-		return false
-	}
-	return true
-}
-
 // check if we are interested in the current file
 func isInterest(info os.FileInfo) bool {
 	// never consider yml files
@@ -351,4 +334,13 @@ func contains(a []string, x string) bool {
 		}
 	}
 	return false
+}
+
+// util function
+func getAbsolutePath(path string) string {
+	// init conf
+	conf := config.GetConf()
+	return conf.Walker.Path() +
+		string(os.PathSeparator) +
+		path
 }

@@ -44,6 +44,16 @@ func processNewFiles() {
 	}
 }
 
+func processSideCarManagedMeta(file *db.File, meta *db.Meta) error {
+	// init conf
+	conf := config.GetConf()
+	if !conf.SideCar.IsEnabled() {
+		return nil
+	}
+	return postSideCarManagedMeta(file, meta)
+
+}
+
 func processNewFile(file *db.File) {
 	// try to upload
 	upload, err := uplaodImage(file)
@@ -51,13 +61,10 @@ func processNewFile(file *db.File) {
 	if err == nil {
 		db.SetFileStatus(file, "uploaded")
 		// try to post meta
-		_, err := postMeta(&upload)
+		meta, err := postMeta(&upload)
 		// if all good set the status of the file as "completed"
-		if err == nil {
-			_, err := postManagedMeta(file)
-			if err == nil {
-				db.SetFileStatus(file, "completed")
-			}
+		if err == nil && processSideCarManagedMeta(file, &meta) == nil {
+			db.SetFileStatus(file, "completed")
 		}
 	}
 }
@@ -89,9 +96,9 @@ func processStuckedFile(file *db.File) {
 	}
 	logger.Warning("Will try to post Meta for stucked file :", file.GetPath())
 	// trying to post meta
-	_, err = postMeta(upload)
+	meta, err := postMeta(upload)
 	// if all good set the status of the file as "completed"
-	if err == nil {
+	if err == nil && processSideCarManagedMeta(file, &meta) == nil {
 		db.SetFileStatus(file, "completed")
 	}
 

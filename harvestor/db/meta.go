@@ -16,6 +16,7 @@ type Meta struct {
 // Define all interfaces for this struct
 type IMeta interface {
 	GetID() int
+	GetMetaID() string
 	GetCreatedAt() time.Time
 	GetUpdatedAt() time.Time
 	Create() error
@@ -24,6 +25,10 @@ type IMeta interface {
 // Implementation
 func (m Meta) GetID() int {
 	return m.ID
+}
+
+func (m Meta) GetMetaID() string {
+	return m.MetaID
 }
 
 func (m Meta) GetCreatedAt() time.Time {

@@ -1,22 +1,22 @@
 package config
 
 // place holder for now
-type SideCardConfiguration struct {
+type SideCarConfiguration struct {
 	Enabled bool
 	Debug   bool
 }
 
 // Define all interfaces for this struct
-type ISideCardConfiguration interface {
+type ISideCarConfiguration interface {
 	IsEnabled() bool
 	IsDebug() bool
 }
 
 // Implementation
-func (s SideCardConfiguration) IsEnabled() bool {
+func (s SideCarConfiguration) IsEnabled() bool {
 	return s.Enabled
 }
 
-func (s SideCardConfiguration) IsDebug() bool {
+func (s SideCarConfiguration) IsDebug() bool {
 	return s.Debug
 }

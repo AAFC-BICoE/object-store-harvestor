@@ -126,12 +126,3 @@ func GetStuckedFiles(files *[]File) {
 	db.Where("status = ?", "uploaded").Find(files)
 	logger.Debug("Found total stucked files : ", len(*files))
 }
-
-func GetUploadByFile(file *File) (*Upload, error) {
-	db := GetHarvesterDB()
-	var upload Upload
-	if err := db.Where("file_id = ?", file.GetID()).Find(&upload).Error; err != nil {
-		return &upload, err
-	}
-	return &upload, nil
-}

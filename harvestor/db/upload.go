@@ -53,3 +53,12 @@ func CreateUpload(u *Upload) error {
 	err := db.Create(u).Error
 	return err
 }
+
+func GetUploadByFile(file *File) (*Upload, error) {
+	db := GetHarvesterDB()
+	var upload Upload
+	if err := db.Where("file_id = ?", file.GetID()).Find(&upload).Error; err != nil {
+		return &upload, err
+	}
+	return &upload, nil
+}

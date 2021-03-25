@@ -57,10 +57,10 @@ func migrateHarvester() {
 	if err != nil {
 		logger.Fatal("Can NOT AutoMigrate `File` for SQLite DB:", err)
 	}
-	// Migrate the schema for Sidecard table
-	err = db.AutoMigrate(&Sidecard{})
+	// Migrate the schema for Sidecar table
+	err = db.AutoMigrate(&Sidecar{})
 	if err != nil {
-		logger.Fatal("Can NOT AutoMigrate `Sidecard` for SQLite DB:", err)
+		logger.Fatal("Can NOT AutoMigrate `Sidecar` for SQLite DB:", err)
 	}
 	// Migrate the schema for upload table
 	err = db.AutoMigrate(&Upload{})
