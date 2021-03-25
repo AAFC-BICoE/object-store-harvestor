@@ -8,7 +8,7 @@ database:
   # Path to SQLite DB
   dbFile: "/tmp/db-test/harvestor.db"
 
-# yml file for each image
+# sidecar yml file for each image representing managed metadata
 sidecar:
   # log level
   debug: false
@@ -27,8 +27,6 @@ httpclient:
   RetryWaitMin: 3 # how many seconds to wait for retry
   baseApiUrl: "http://localhost:8081"
   upload: "/api/v1/file"
-  #uploadGroup: "dev-group"
-  #uploadGroup: "aafc"
   uploadGroup: "cnc"
   meta: "/api/v1/metadata"
   managedmeta: "/api/v1/managed-attribute-map"
@@ -40,8 +38,6 @@ keycloak:
   adminClientID: "objectstore"
   userName: "cnc-cm"
   userPassword: "cnc-cm"
-    #userName: "user"
-    #userPassword: "user"
   grantType: "password"
   realmName: "dina"
   newTokenBefore: 15 # 15 seconds before Access token expires need to get new one 
