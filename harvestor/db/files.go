@@ -11,9 +11,9 @@ type File struct {
 	ID        int       `json:"id" gorm:"AUTO_INCREMENT; PRIMARY_KEY"`
 	Path      string    `json:"path" gorm:"uniqueIndex"`
 	Name      string    `json:"name"`
-	ModTime   time.Time `json:"mod_at" gorm:"index:idx_file_mod_time"`
+	ModTime   time.Time `json:"mod_at"`
 	Status    string    `json:"status" gorm:"type:varchar(64)"`
-	CreatedAt time.Time `json:"created_at" gorm:"index:idx_file_created_at"`
+	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
@@ -98,7 +98,7 @@ func SetFileStatus(f *File, status string) error {
 	f.Status = status
 	err := db.Save(f).Error
 	if err == nil {
-		logger.Info("File record has been "+status+" for : ", f.GetPath())
+		logger.Info("File record has been '"+status+"' for : ", f.GetPath())
 	}
 	return err
 }

@@ -1,3 +1,7 @@
+// sidecar for managed attributes
+// based on existing metadata
+// for more details please refer to https://gist.github.com/Jkeyuk/6cfc728665fac2dced079c770cf74fca
+
 package httpclient
 
 import (
@@ -13,6 +17,7 @@ import (
 )
 
 // structs for http POST
+// | | | attributes | | |
 type PostSidecarValue struct {
 	Value string `json:"value"`
 }
@@ -20,6 +25,7 @@ type PostSidecarAttributes struct {
 	Values map[string]*PostSidecarValue `json:"values"`
 }
 
+// | | | relationships | | |
 type PostSidecarRelationships struct {
 	PostSidecarRelationshipData *PostSidecarRelationshipData `json:"metadata"`
 }
@@ -30,11 +36,15 @@ type PostSidecarMetaData struct {
 	ID   string `json:"id"`
 	Type string `json:"type"`
 }
+
+// Post sidecar wrapper
 type PostSidecarData struct {
 	Type                     string                   `json:"type"`
 	PostSidecarAttributes    PostSidecarAttributes    `json:"attributes"`
 	PostSidecarRelationships PostSidecarRelationships `json:"relationships"`
 }
+
+// Post sidecar data wrapper
 type PostSidecarMeta struct {
 	PostSidecarData PostSidecarData `json:"data"`
 }
@@ -61,7 +71,6 @@ func postSideCarManagedMeta(file *db.File, meta *db.Meta) error {
 	for key, value := range scf.ManagedAttributes {
 		// populate post data struct
 		postData := getPostData(key, value, meta)
-		logger.Info("postData : ", logger.PrettyGoStruct(postData))
 		payload, err := json.Marshal(*postData)
 		logger.Debug(" post managed meta payload : ", string(payload))
 		if err != nil {
@@ -108,6 +117,7 @@ func postSideCarManagedMeta(file *db.File, meta *db.Meta) error {
 				logger.Error(" error on read body : ", err)
 				return err
 			}
+			logger.Debug(" Managed meta record has been posted : ", logger.PrettyGoStruct(postData))
 
 		} else {
 			// all other use cases are not allowed
@@ -124,6 +134,7 @@ func postSideCarManagedMeta(file *db.File, meta *db.Meta) error {
 	return err
 }
 
+// Helper function to build full struct for post data
 func getPostData(key string, value string, meta *db.Meta) *PostSidecarMeta {
 	// value to assign
 	postValue := &PostSidecarValue{

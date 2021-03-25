@@ -8,7 +8,7 @@ type Meta struct {
 	ID        int       `gorm:"AUTO_INCREMENT; PRIMARY_KEY"`
 	MetaID    string    `json:"id" gorm:"uniqueIndex"`
 	UploadID  int       `json:"file_id" sql:"not null" gorm:"unique_index:idx_meta_upload"`
-	CreatedAt time.Time `json:"created_at" gorm:"index:idx_meta_created_at"`
+	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 	Upload    Upload    `gorm:"foreignkey:UploadID"`
 }
@@ -39,6 +39,7 @@ func (m Meta) GetUpdatedAt() time.Time {
 	return m.UpdatedAt
 }
 
+// Create meta record in DB
 func CreateMeta(m *Meta) error {
 	db := GetHarvesterDB()
 	err := db.Create(m).Error

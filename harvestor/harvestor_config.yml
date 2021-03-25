@@ -45,7 +45,10 @@ keycloak:
   grantType: "password"
   realmName: "dina"
   newTokenBefore: 15 # 15 seconds before Access token expires need to get new one 
-  debug: true
+  # !!! Important !!!
+  # if you set to true, lots of sensitive information will be shown on the screen
+  # !!! Please do not set to true if you are demoing !!!
+  debug: false
   # !!! Important !!!
   # set to `false` from current `true` only if you are running against dev
   # otherwise it will always fail with 401 - Status Unauthorized

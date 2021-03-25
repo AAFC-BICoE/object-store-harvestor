@@ -6,11 +6,10 @@ import (
 )
 
 type Sidecar struct {
-	ID     int    `json:"id" gorm:"AUTO_INCREMENT; PRIMARY_KEY"`
-	Path   string `json:"path" gorm:"uniqueIndex"`
-	FileID int    `json:"file_id" sql:"not null" gorm:"unique_index:idx_sidecard_file"`
-	Status string `json:"status" gorm:"type:varchar(64)"`
-	//CreatedAt time.Time `json:"created_at" gorm:"index:idx_sidecard_created_at"`
+	ID        int       `json:"id" gorm:"AUTO_INCREMENT; PRIMARY_KEY"`
+	Path      string    `json:"path" gorm:"uniqueIndex"`
+	FileID    int       `json:"file_id" sql:"not null" gorm:"unique_index:idx_sidecard_file"`
+	Status    string    `json:"status" gorm:"type:varchar(64)"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 	File      File      `gorm:"foreignkey:FileID"`
@@ -57,6 +56,7 @@ func CreateSidecar(s *Sidecar) error {
 	return err
 }
 
+// Get sidecar record from DB by file record from DB
 func GetSideCarByFile(file *File) (*Sidecar, error) {
 	db := GetHarvesterDB()
 	var sidecar Sidecar
@@ -65,13 +65,3 @@ func GetSideCarByFile(file *File) (*Sidecar, error) {
 	}
 	return &sidecar, nil
 }
-
-/*
-type SidecarFile struct {
-	AcMetadataCreator string
-	DcCreator         string
-	AcDerivedFrom     string
-	ManagedAttributes []Attribute
-	Tags              []Tag
-}
-*/
