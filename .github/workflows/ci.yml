@@ -23,6 +23,51 @@ jobs:
         run: |
           go test ./... -v -cover
 
+      - name: Build linux-amd64 artifact
+        working-directory: ./harvestor
+        env:
+          GOARCH: amd64
+          GOOS: linux
+        run: |
+          go build -tags netgo -ldflags '-extldflags "-static"' -o main .
+
+      - name: Store artifact
+        uses: actions/upload-artifact@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          name: build-artifacts
+          path: |
+            harvestor/main
+            harvestor/harvestor_config.yml
+
+  push:
+    name: Package and add to Release
+    needs: [build]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+
+    steps:
+      - name: Download artifacts from build job
+        uses: actions/download-artifact@v2
+        with:
+          name: build-artifacts
+          path: dist
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+      - name: Create tar.gz
+        run: |
+          tar czvf object-store-harvestor-linux-amd64.${{ steps.get_version.outputs.VERSION }}.tar.gz -C dist .
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: object-store-harvestor-linux-amd64.${{ steps.get_version.outputs.VERSION }}.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
+
 
 
 
