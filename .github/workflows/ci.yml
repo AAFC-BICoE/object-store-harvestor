@@ -25,7 +25,7 @@ jobs:
 
       - name: Build linux-amd64 artifact
         working-directory: ./harvestor
-	env:
+        env:
           GOARCH: amd64
           GOOS: linux
         run: |
