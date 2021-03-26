@@ -23,6 +23,24 @@ jobs:
         run: |
           go test ./... -v -cover
 
+      - name: Build linux-amd64 artifact
+        working-directory: ./harvestor
+	env:
+          GOARCH: amd64
+          GOOS: linux
+        run: |
+          go build -tags netgo -ldflags '-extldflags "-static"' -o main .
+
+      - name: Store artifact
+        working-directory: ./harvestor
+        uses: actions/upload-artifact@v2
+        with:
+          name: build-artifacts
+          path: |
+            main
+            harvestor_config.yml
+
+
 
 
 
