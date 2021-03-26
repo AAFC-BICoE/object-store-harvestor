@@ -40,6 +40,21 @@ jobs:
             main
             harvestor_config.yml
 
+  push:
+    name: Package and add to Release
+    needs: [build]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download artifacts from build job
+        uses: actions/download-artifact@v2
+        with:
+          name: build-artifacts
+      - name: Create tar.gz
+        run: |
+          tar czvf object-store-harvestor-linux-amd64.v0.1.tar.gz .
+
+
 
 
 
