@@ -49,9 +49,10 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: build-artifacts
+          path: dist
       - name: Create tar.gz
         run: |
-          tar czvf object-store-harvestor-linux-amd64.v0.1.tar.gz .
+          tar czvf object-store-harvestor-linux-amd64.v0.1.tar.gz -C dist .
 
 
 
