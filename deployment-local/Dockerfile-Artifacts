@@ -29,6 +29,9 @@ RUN go tool cover -html=cover.out -o /tmp/cover.html
 ENV GOOS=linux
 ENV GOARCH=amd64
 RUN go build -tags netgo -ldflags '-extldflags "-static"' -o main .
+#ENV GOOS=windows
+#ENV GOARCH=amd64
+#RUN go build -tags netgo -ldflags '-H=windowsgui -extldflags "-static"' -o main.exe .
 
 # - - - LOCAL - - - #
 # Pushing Artifact to local
@@ -38,6 +41,7 @@ RUN apk update && apk upgrade
 RUN adduser -S -D -H -h /app appuser
 USER appuser
 COPY --from=builder /go/src/harvestor/main /app/
+#COPY --from=builder /go/src/harvestor/main.exe /app/
 COPY --from=builder /go/src/harvestor/harvestor_config.yml /app/
 # For now copy the cover report to release container
 COPY --from=builder /tmp/cover.html /tmp/

@@ -13,7 +13,7 @@ type Upload struct {
 	Exif              datatypes.JSON `json:"exif"`
 	DateTimeDigitized time.Time      `json:"dateTimeDigitized" gorm:"default:null"`
 	FileID            int            `json:"file_id" sql:"not null" gorm:"unique_index:idx_upload_file"`
-	CreatedAt         time.Time      `json:"created_at" gorm:"index:idx_upload_created_at"`
+	CreatedAt         time.Time      `json:"created_at"`
 	UpdatedAt         time.Time      `json:"updated_at"`
 	File              File           `gorm:"foreignkey:FileID"`
 }
@@ -48,8 +48,20 @@ func (u Upload) GetCreatedAt() time.Time {
 func (u Upload) GetUpdatedAt() time.Time {
 	return u.UpdatedAt
 }
+
+// Create uplod record in DB
 func CreateUpload(u *Upload) error {
 	db := GetHarvesterDB()
 	err := db.Create(u).Error
 	return err
+}
+
+// Get upload record from DB by file record from DB
+func GetUploadByFile(file *File) (*Upload, error) {
+	db := GetHarvesterDB()
+	var upload Upload
+	if err := db.Where("file_id = ?", file.GetID()).Find(&upload).Error; err != nil {
+		return &upload, err
+	}
+	return &upload, nil
 }

@@ -11,9 +11,9 @@ type File struct {
 	ID        int       `json:"id" gorm:"AUTO_INCREMENT; PRIMARY_KEY"`
 	Path      string    `json:"path" gorm:"uniqueIndex"`
 	Name      string    `json:"name"`
-	ModTime   time.Time `json:"mod_at" gorm:"index:idx_file_mod_time"`
+	ModTime   time.Time `json:"mod_at"`
 	Status    string    `json:"status" gorm:"type:varchar(64)"`
-	CreatedAt time.Time `json:"created_at" gorm:"index:idx_file_created_at"`
+	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
@@ -26,7 +26,7 @@ type IFile interface {
 	GetStatus() string
 	GetCreatedAt() time.Time
 	GetUpdatedAt() time.Time
-	Create(path string, info os.FileInfo) error
+	CreateFile(path string, info os.FileInfo) (*File, error)
 }
 
 // Implementation
@@ -58,7 +58,8 @@ func (f File) GetUpdatedAt() time.Time {
 	return f.UpdatedAt
 }
 
-func (f File) Create(path string, info os.FileInfo) error {
+func CreateFile(path string, info os.FileInfo) (*File, error) {
+	var f File
 	// get logger
 	var logger = l.NewLogger()
 	// get config
@@ -80,13 +81,13 @@ func (f File) Create(path string, info os.FileInfo) error {
 		if err != nil {
 			errMsg := "File record CAN NOT be stored in DB for :"
 			logger.Error(errMsg, f.GetPath(), err)
-			return err
+			return &f, err
 		}
 		logger.Info("File record has been stored in DB for :", f.GetPath())
 		logger.Debug("DB File record : ", logger.PrettyGoStruct(f))
-		return err
+		return &f, err
 	}
-	return nil
+	return &f, nil
 }
 
 // After upload change status from "new" to "complete"
@@ -97,7 +98,7 @@ func SetFileStatus(f *File, status string) error {
 	f.Status = status
 	err := db.Save(f).Error
 	if err == nil {
-		logger.Info("File record has been "+status+" for : ", f.GetPath())
+		logger.Info("File record has been '"+status+"' for : ", f.GetPath())
 	}
 	return err
 }
@@ -124,13 +125,4 @@ func GetStuckedFiles(files *[]File) {
 	db := GetHarvesterDB()
 	db.Where("status = ?", "uploaded").Find(files)
 	logger.Debug("Found total stucked files : ", len(*files))
-}
-
-func GetUploadByFile(file *File) (*Upload, error) {
-	db := GetHarvesterDB()
-	var upload Upload
-	if err := db.Where("file_id = ?", file.GetID()).Find(&upload).Error; err != nil {
-		return &upload, err
-	}
-	return &upload, nil
 }

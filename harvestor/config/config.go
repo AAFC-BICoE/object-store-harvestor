@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"github.com/spf13/viper"
 	"log"
+	"os"
 	"path/filepath"
 	"strings"
 )
@@ -19,6 +20,7 @@ import (
 type Configuration struct {
 	Database   DatabaseConfiguration   // SQLite DB config
 	Walker     FileWalkerConfiguration // Media File walker config
+	SideCar    SideCarConfiguration    // Media File SideCar config
 	HttpClient HttpClientConfiguration // Http Client config
 	Keycloak   KeycloakConfiguration   // Keycloak config
 	Logger     LoggerConfiguration     // Logger config
@@ -66,6 +68,8 @@ func readFromFile(filename string) error {
 	v.SetConfigName(name)
 	// config file extension
 	v.SetConfigType(extension)
+	// config itself file path
+	v.AddConfigPath("." + string(os.PathSeparator))
 	// config file path
 	v.AddConfigPath(path)
 	// in case we have .env
