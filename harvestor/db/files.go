@@ -1,7 +1,7 @@
 package db
 
 import (
-	"harvestor/config"
+	_ "harvestor/config"
 	l "harvestor/logger"
 	"os"
 	"time"
@@ -58,18 +58,16 @@ func (f File) GetUpdatedAt() time.Time {
 	return f.UpdatedAt
 }
 
-func CreateFile(path string, info os.FileInfo) (*File, error) {
+func CreateFile(absolutePath string, info os.FileInfo) (*File, error) {
 	var f File
 	// get logger
 	var logger = l.NewLogger()
 	// get config
-	conf := config.GetConf()
+	//conf := config.GetConf()
 	// get DB instance
 	db := GetHarvesterDB()
-	// define absolute path
-	absolutePath := conf.Walker.Path() + string(os.PathSeparator) + path
-	// validation | check if the record already exist
-	if doesNotExist(absolutePath) {
+	// double check if the record already there or not
+	if doesFileNotExist(absolutePath) {
 		// Create new one
 		err := db.FirstOrCreate(&f,
 			File{
@@ -104,7 +102,7 @@ func SetFileStatus(f *File, status string) error {
 }
 
 // check by absolute path if the file exist in DB already
-func doesNotExist(absolutePath string) bool {
+func doesFileNotExist(absolutePath string) bool {
 	var files []File
 	db := GetHarvesterDB()
 	db.Where("path = ?", absolutePath).Find(&files)
@@ -126,3 +124,19 @@ func GetStuckedFiles(files *[]File) {
 	db.Where("status = ?", "uploaded").Find(files)
 	logger.Debug("Found total stucked files : ", len(*files))
 }
+
+func GetFileByPath(path string) (*File, error) {
+	var file File
+	db := GetHarvesterDB()
+	err := db.Where("path = ?", path).First(&file).Error
+	return &file, err
+}
+
+/*
+func GetFileBySidecar(sidecar *Sidecar) (*File, error) {
+	var file File
+	db := GetHarvesterDB()
+	err := db.Where("id = ?", sidecar.GetFileID()).First(&file).Error
+	return &file, err
+}
+*/

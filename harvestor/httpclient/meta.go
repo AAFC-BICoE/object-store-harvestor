@@ -114,7 +114,8 @@ func postMeta(upload *db.Upload) (db.Meta, error) {
 		// assign a meta id
 		meta.MetaID = rm.ResponseData.Id
 		// assign a file id
-		meta.UploadID = upload.ID
+		meta.UploadID = upload.GetID()
+		meta.FileID = upload.GetFileID()
 		// creating new record
 		logger.Debug("About to create meta record from response body in DB ...")
 		err = db.CreateMeta(&meta)

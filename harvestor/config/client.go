@@ -15,6 +15,7 @@ type HttpClientConfiguration struct {
 	UploadGroup        string
 	Meta               string
 	ManagedMeta        string
+	Derivative         string
 }
 
 // Define all interfaces for this struct
@@ -28,6 +29,7 @@ type IHttpClientConfiguration interface {
 	GetUploadGroup() string
 	GetMetaUri() string
 	GetManagedMetaUri() string
+	GetDerivativeUri() string
 }
 
 // Implementation
@@ -65,4 +67,8 @@ func (h HttpClientConfiguration) GetMetaUri() string {
 
 func (h HttpClientConfiguration) GetManagedMetaUri() string {
 	return h.ManagedMeta
+}
+
+func (h HttpClientConfiguration) GetDerivativeUri() string {
+	return h.Derivative
 }

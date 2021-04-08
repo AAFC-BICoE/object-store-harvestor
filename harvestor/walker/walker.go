@@ -13,36 +13,61 @@ import (
 	"sync"
 )
 
-// entry point for external calls
-func Run() {
+// Walker on the Bio Cluster
+func ClusterRun() {
 	// init logger
 	var logger = l.NewLogger()
 	// init conf
 	conf := config.GetConf()
 	logger.Info("Harvester Walker:EntryPointPath: `", conf.Walker.Path(), "`")
-	err := WalkWithSymlinks(conf.Walker.Path(), walkFunc)
+	err := WalkWithSymlinks(conf.Walker.Path(), walkSidecarsFunc)
 	if err != nil {
-		logger.Error("Harvester Walker ERROR:", err)
+		logger.Error("WalkWithSymlinks error : ", err)
 	}
-	logger.Info("Harvester Walker has completed the walk in `", conf.Walker.Path(), "`")
-
+	logger.Info("Harvester Walker for sidecars has completed the walk in `", conf.Walker.Path(), "`")
 }
 
-func walkFunc(path string, info os.FileInfo, err error) error {
+// TODO Development
+// Walker on the PC
+func PcRun() {
+	// init logger
+	var logger = l.NewLogger()
+	// init conf
+	conf := config.GetConf()
+	logger.Info("Harvester Walker:EntryPointPath: `", conf.Walker.Path(), "`")
+	err := WalkWithSymlinks(conf.Walker.Path(), walkImagesFunc)
+	if err != nil {
+		logger.Error("WalkWithSymlinks error : ", err)
+	}
+	logger.Info("Harvester Walker for sidecars has completed the walk in `", conf.Walker.Path(), "`")
+}
+
+// Bio Cluster use case
+// Never upload any files from the folder leaf if it has no metadata.yml
+func walkSidecarsFunc(path string, info os.FileInfo, err error) error {
 	// init logger
 	var logger = l.NewLogger()
 	absolutePath := getAbsolutePath(path)
 	logger.Debug("walker absolutePath :", absolutePath)
-	if !info.IsDir() &&
-		isInterest(info) &&
-		HasSideCar(absolutePath) {
-		file, err := db.CreateFile(path, info)
+	if !info.IsDir() && isInterest(info) {
+		return processSidecarFromWalker(path, info)
+	}
+	return nil
+}
+
+// TODO Development
+// Future development for PC of scientists
+func walkImagesFunc(path string, info os.FileInfo, err error) error {
+	// init logger
+	var logger = l.NewLogger()
+	absolutePath := getAbsolutePath(path)
+	logger.Debug("walker absolutePath :", absolutePath)
+	if !info.IsDir() && isInterest(info) {
+		_, err := db.CreateFile(path, info)
 		if err != nil {
 			logger.Error("Walker:File:Create :", err)
 		}
 		logger.Debug("Walker:File created a file for path :", path)
-		// all good here, need to create a SideCar
-		CreateSideCarByFile(file)
 
 	}
 	return err
@@ -310,15 +335,15 @@ func getFileExtension(filename string) string {
 
 // check if we are interested in the current file
 func isInterest(info os.FileInfo) bool {
-	// never consider yml files
-	if getFileExtension(info.Name()) == "yml" {
-		return false
-	}
 	// init logger
 	var logger = l.NewLogger()
 	// init conf
 	conf := config.GetConf()
-
+	// TODO Development
+	// never consider yml files on PC
+	if conf.App.GetEnvironment() == "PC" && getFileExtension(info.Name()) == "yml" {
+		return false
+	}
 	prep := strings.Replace(conf.Walker.Interest(), ",", " ", -1)
 	interest := strings.Fields(prep)
 	logger.Debug("files of interest : ", interest)
@@ -343,4 +368,25 @@ func getAbsolutePath(path string) string {
 	return conf.Walker.Path() +
 		string(os.PathSeparator) +
 		path
+}
+
+func createFileRecord(filePath string) (*db.File, error) {
+	// init logger
+	var logger = l.NewLogger()
+	// init empty file db struct
+	var fileRecord *db.File
+	// get stats
+	fileStat, err := os.Stat(filePath)
+	if err != nil {
+		logger.Fatal("Can't get stats for : ", filePath, " details : ", err)
+		return fileRecord, err
+	}
+
+	// getting the record from DB after create
+	fileRecord, err = db.CreateFile(filePath, fileStat)
+	if err != nil {
+		logger.Fatal("Can't create db record for file : ", filePath, " details : ", err)
+		return fileRecord, err
+	}
+	return fileRecord, err
 }
