@@ -2,10 +2,9 @@
 // send each file of our interest to to object-store-api and map it back to the metadata
 // For more information please refer to https://github.com/AAFC-BICoE/object-store-harvestor/blob/dev/doc/design.md
 
-// TODO For now we do not modify config while the app is running
-// viper has OnConfigChange event which we can trigger to reload our config during the app run
-// Do not see yet this case. May be later on with UI for the user
-
+// Package config provides a functionality to read from yml config file
+// and provides values for each key in the file
+// the package is splitted into multiple for simplicity and readability
 package config
 
 import (
@@ -17,6 +16,7 @@ import (
 	"strings"
 )
 
+// Config wrapper struct
 type Configuration struct {
 	Database   DatabaseConfiguration   // SQLite DB config
 	Walker     FileWalkerConfiguration // Media File walker config

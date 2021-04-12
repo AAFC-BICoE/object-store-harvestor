@@ -1,9 +1,14 @@
+// Package config provides a functionality to read from yml config file
+// and provides values for each key in the file
+// the package is splitted into multiple for simplicity and readability
+// Logger config
 package config
 
 import (
 	"strings"
 )
 
+// Logger config struct
 type LoggerConfiguration struct {
 	Level string // Log level. Example : Info, Debug, Error and etc
 	Path  string // Path to the log file. Example : /var/log/aafc_bcoe/

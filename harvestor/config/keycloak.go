@@ -1,16 +1,20 @@
+// Package config provides a functionality to read from yml config file
+// and provides values for each key in the file
+// the package is splitted into multiple for simplicity and readability
+// Keycloak config
 package config
 
-// place holder for now
+// Keycloak config struct
 type KeycloakConfiguration struct {
-	Host           string
-	AdminClientID  string
-	UserName       string
-	UserPassword   string
-	GrantType      string
-	RealmName      string
-	NewTokenBefore int
-	Debug          bool
-	Enabled        bool
+	Host           string // Keycloak hostname
+	AdminClientID  string // Keycloak admin client id is configured by users
+	UserName       string // Keycloak User name which is used to connect on behalf of AdminClientID
+	UserPassword   string // Keycloak User password which is used to connect on behalf of AdminClientID
+	GrantType      string // Keycloak OAuth2-compliant GrantType
+	RealmName      string // Keycloak Realm Name for Keycloak UserName
+	NewTokenBefore int    // Number of seconds before Access token expires it will try to get new one
+	Debug          bool   // Keycloak Logger mode
+	Enabled        bool   // Keycloak ON/OFF
 }
 
 // Define all interfaces for this struct

@@ -1,26 +1,26 @@
+// Package config provides a functionality to read from yml config file
+// and provides values for each key in the file
+// the package is splitted into multiple for simplicity and readability
+// Http Client config
 package config
 
-import (
-	"time"
-)
-
-// place holder for now
+// Http client config struct
 type HttpClientConfiguration struct {
-	TimeOut            int
-	RetryMax           int
-	RetryWaitMin       int
-	MaxIdleConnections int
-	BaseApiUrl         string
-	Upload             string
-	UploadGroup        string
-	Meta               string
-	ManagedMeta        string
-	Derivative         string
+	TimeOut            int    // how many seconds for Http client to timeout
+	RetryMax           int    // how many times to retry
+	RetryWaitMin       int    // how many seconds to wait for retry
+	MaxIdleConnections int    // how many max idle connection to keep on init
+	BaseApiUrl         string // Base API URL for object-store-api
+	Upload             string // Upload API resource
+	UploadGroup        string // Upload Group
+	Meta               string // Meta API resource
+	ManagedMeta        string // ManagedMeta API resource
+	Derivative         string // Derivative API resource
 }
 
 // Define all interfaces for this struct
 type IHttpClientConfiguration interface {
-	GetTimeOut() time.Duration
+	GetTimeOut() int
 	GetRetryMax() int
 	GetRetryWaitMin() int
 	GetMaxIdleConnections() int
