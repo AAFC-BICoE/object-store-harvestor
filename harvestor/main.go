@@ -12,37 +12,37 @@ import (
 	"os"
 )
 
+// main returns nothing
+// this is the entry point for the app
 func main() {
 	// Getting our Configuration
 	filename := getFileName()
+	// Load yml config file
 	config.Load(filename)
-
 	// DB Init
 	db.Init()
-
 	// httpclient Init
 	httpclient.InitHttpClient()
-
-	//httpclient.Init()
-
 	// Running orchestrator
 	orchestrator.Run()
-
-	// If you need to ssh to the container before exit
-	// Uncomment the following line (it will be up for 3 min)
-	// time.Sleep(300 * time.Second) // sleep for 5 min before exiting
 }
 
+// very simple function to process arg
+// could be doene with Package flag
+// just to simple to use OS
 // helper function to read args
 func getFileName() string {
+	// assign all args
 	args := os.Args
+	// check if any args are present
+	// first arg is always an executable file
 	if len(args) == 1 {
 		example := "(example : /app/harvestor_config.yml)"
 		err := "Application requires an argument as a string to a config file, none has been provided ||| " + example
 		log.Fatal(err)
 	}
-	//log.Println("args :", args)
+	// assign the arg as a yml config file name
 	filename := args[1]
-	//log.Println("filename :", filename)
+	// return it
 	return filename
 }

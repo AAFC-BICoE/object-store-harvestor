@@ -27,11 +27,56 @@ func InitHttpClient() {
 	logger.Info("Harvestor Http Client has been initialized !!!")
 }
 
-func Run() {
+// http client for Bio Cluster
+func ClusterRun() {
+	// Phase I
+	// Upload files and Meta
 	// dealing with brand new files
 	processNewFiles()
 	// covering rare case when new files were not done E2E
 	processStuckedFiles()
+
+	// Phase II
+	// Building relations
+	// dealing with brand new sidecars
+	processNewRelations()
+}
+
+// http client for PC
+func PcRun() {
+	// Phase I
+	// Upload files and Meta
+	// dealing with brand new files
+	processNewFiles()
+	// covering rare case when new files were not done E2E
+	processStuckedFiles()
+}
+
+func processNewRelations() {
+	// Getting logger
+	logger := l.NewLogger()
+	// init an empty slice of new sidecars
+	var sidecars []db.Sidecar
+	// getting all new files
+	db.GetNewSidecars(&sidecars)
+	// checking if there are any new sidecars
+	if len(sidecars) == 0 {
+		logger.Info("No new sidecars. Harvester Http Client has nothing to upload for relations !!!")
+	}
+	// looping new sidecars
+	for _, sidecar := range sidecars {
+		logger.Info("= = = = = Building relationships E2E current sidecar : ", sidecar.GetPath(), " = = = = =")
+		logger.Debug(" sidecar : ", logger.PrettyGoStruct(sidecar))
+		processNewSidecar(&sidecar)
+		logger.Info("= = = = = E2E is DONE for current sidecar : ", sidecar.GetPath(), " = = = = =")
+	}
+}
+
+// process singe sidecar file
+func processNewSidecar(sidecar *db.Sidecar) {
+	if processSideCarManagedMeta(sidecar) == nil {
+		_ = processSideCarDerivative(sidecar)
+	}
 }
 
 // A wrapper to loop all new files
@@ -54,14 +99,23 @@ func processNewFiles() {
 	}
 }
 
-// Support for sidecar yml files to post managed metadata for derivatives
-func processSideCarManagedMeta(file *db.File, meta *db.Meta) error {
-	// init conf
-	conf := config.GetConf()
-	if !conf.SideCar.IsEnabled() {
-		return nil
+// Support for sidecar yml files to post managed metadata
+func processSideCarManagedMeta(sidecar *db.Sidecar) error {
+	err := postSideCarManagedMeta(sidecar)
+	if err == nil {
+		db.SetSidecarStatus(sidecar, "managed-meta")
 	}
-	return postSideCarManagedMeta(file, meta)
+	return err
+
+}
+
+// Support for sidecar yml files to post derivatives
+func processSideCarDerivative(sidecar *db.Sidecar) error {
+	err := postSideCarDerivative(sidecar)
+	if err == nil {
+		db.SetSidecarStatus(sidecar, "completed")
+	}
+	return err
 
 }
 
@@ -73,12 +127,10 @@ func processNewFile(file *db.File) {
 	if err == nil {
 		db.SetFileStatus(file, "uploaded")
 		// try to post meta
-		meta, err := postMeta(&upload)
+		_, err := postMeta(&upload)
+		//meta, err := postMeta(&upload)
 		// if all good set the status of the file as "completed"
 		if err == nil {
-			db.SetFileStatus(file, "meta-good")
-		}
-		if processSideCarManagedMeta(file, &meta) == nil {
 			db.SetFileStatus(file, "completed")
 		}
 	}
@@ -113,9 +165,10 @@ func processStuckedFile(file *db.File) {
 	}
 	logger.Warning("Will try to post Meta for stucked file :", file.GetPath())
 	// trying to post meta
-	meta, err := postMeta(upload)
+	_, err = postMeta(upload)
+	//meta, err := postMeta(upload)
 	// if all good set the status of the file as "completed"
-	if err == nil && processSideCarManagedMeta(file, &meta) == nil {
+	if err == nil {
 		db.SetFileStatus(file, "completed")
 	}
 

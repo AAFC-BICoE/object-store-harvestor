@@ -5,17 +5,16 @@ import (
 	"testing"
 )
 
-/*
-walker:
-  # File walker root path for media files
-  EntryPointPath: "/tmp/data-test"
-*/
-
 func TestPath(t *testing.T) {
-	var file = "../default_harvestor_config.yml"
+	var file = "../harvestor_config.yml"
 	Load(file)
 	conf := GetConf()
-	want := "/tmp/data-test"
-	assert.Equal(t, want, conf.Walker.Path())
+	assert.Equal(t, true, len(conf.Walker.Path()) > 0)
+}
 
+func TestInterest(t *testing.T) {
+	var file = "../harvestor_config.yml"
+	Load(file)
+	conf := GetConf()
+	assert.Equal(t, "yml", conf.Walker.Interest())
 }

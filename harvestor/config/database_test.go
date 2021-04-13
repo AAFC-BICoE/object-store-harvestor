@@ -2,50 +2,34 @@ package config
 
 import (
 	"github.com/stretchr/testify/assert"
+	"regexp"
 	"testing"
 )
 
-/*
-database:
-  # Number of max Open connections to SQLite DB
-  maxOpenConns: 2
-  # Number of max Idle connections to SQLite DB
-  maxIdleConns: 2
-  # Number of minutes connection will live
-  connMaxLifetime: 30
-  # Path to SQLite DB
-  dbFile: "/tmp/data-test/harvestor.db"
-*/
-
 func TestMaxOpenConnections(t *testing.T) {
-	var file = "../default_harvestor_config.yml"
+	var file = "../harvestor_config.yml"
 	Load(file)
 	conf := GetConf()
-	want := 2
-	assert.Equal(t, want, conf.Database.MaxOpenConnections())
-
+	assert.Regexp(t, regexp.MustCompile(`^[0-9]{1,2}$`), conf.Database.MaxOpenConnections())
 }
 
 func TestMaxIdleConnections(t *testing.T) {
-	var file = "../default_harvestor_config.yml"
+	var file = "../harvestor_config.yml"
 	Load(file)
 	conf := GetConf()
-	want := 2
-	assert.Equal(t, want, conf.Database.MaxIdleConnections())
+	assert.Regexp(t, regexp.MustCompile(`^[0-9]{1,2}$`), conf.Database.MaxIdleConnections())
 }
 
 func TestMaxConnectionLifeTime(t *testing.T) {
-	var file = "../default_harvestor_config.yml"
+	var file = "../harvestor_config.yml"
 	Load(file)
 	conf := GetConf()
-	want := 30
-	assert.Equal(t, want, conf.Database.MaxConnectionLifeTime())
+	assert.Regexp(t, regexp.MustCompile(`^[0-9]{1,2}$`), conf.Database.MaxConnectionLifeTime())
 }
 
 func TestDBFile(t *testing.T) {
-	var file = "../default_harvestor_config.yml"
+	var file = "../harvestor_config.yml"
 	Load(file)
 	conf := GetConf()
-	want := "/tmp/db-test/harvestor.db"
-	assert.Equal(t, want, conf.Database.DBFile())
+	assert.Regexp(t, regexp.MustCompile(`((?:[^/]*/)*)(.db)`), conf.Database.DBFile())
 }

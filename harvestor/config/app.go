@@ -1,10 +1,14 @@
+// Package config provides a functionality to read from yml config file
+// and provides values for each key in the file
+// the package is splitted into multiple for simplicity and readability
+// App config
 package config
 
-// place holder for now
+// App struct
 type AppConfiguration struct {
-	Release string
-	Name    string
-	Env     string
+	Release string // not used yet
+	Name    string // not used yet
+	Env     string // For now used to define cluster vs PC
 }
 
 // Define all interfaces for this struct

@@ -2,27 +2,20 @@ package config
 
 import (
 	"github.com/stretchr/testify/assert"
+	"regexp"
 	"testing"
 )
 
-/*
-app:
-  release: "0.01"
-  name: "harvestor"
-  env: "dev"
-*/
-
 func TestGetRelease(t *testing.T) {
-	var file = "../default_harvestor_config.yml"
+	var file = "../harvestor_config.yml"
 	Load(file)
 	conf := GetConf()
-	want := "0.01"
-	assert.Equal(t, want, conf.App.GetRelease())
+	assert.Regexp(t, regexp.MustCompile(`^[0-9]{1,3}\.[0-9]{1,3}$`), conf.App.GetRelease())
 
 }
 
 func TestGetName(t *testing.T) {
-	var file = "../default_harvestor_config.yml"
+	var file = "../harvestor_config.yml"
 	Load(file)
 	conf := GetConf()
 	want := "harvestor"
@@ -30,9 +23,9 @@ func TestGetName(t *testing.T) {
 }
 
 func TestGetEnvironment(t *testing.T) {
-	var file = "../default_harvestor_config.yml"
+	var file = "../harvestor_config.yml"
 	Load(file)
 	conf := GetConf()
-	want := "dev"
+	want := "cluster"
 	assert.Equal(t, want, conf.App.GetEnvironment())
 }

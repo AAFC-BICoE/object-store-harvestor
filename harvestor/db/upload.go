@@ -33,6 +33,12 @@ type IUpload interface {
 func (u Upload) GetID() int {
 	return u.ID
 }
+func (u Upload) GetUploadID() int {
+	return u.UploadID
+}
+func (u Upload) GetFileID() int {
+	return u.FileID
+}
 func (u Upload) GetFileIdentifier() string {
 	return u.FileIdentifier
 }
@@ -52,15 +58,14 @@ func (u Upload) GetUpdatedAt() time.Time {
 // Create uplod record in DB
 func CreateUpload(u *Upload) error {
 	db := GetHarvesterDB()
-	err := db.Create(u).Error
-	return err
+	return db.Create(u).Error
 }
 
 // Get upload record from DB by file record from DB
 func GetUploadByFile(file *File) (*Upload, error) {
 	db := GetHarvesterDB()
 	var upload Upload
-	if err := db.Where("file_id = ?", file.GetID()).Find(&upload).Error; err != nil {
+	if err := db.Where("file_id = ?", file.GetID()).Joins("File").Find(&upload).Error; err != nil {
 		return &upload, err
 	}
 	return &upload, nil

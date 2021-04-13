@@ -7,6 +7,7 @@ services:
     environment:
       - APP_MODE=debug
       - RELEASE_VERSION=0.01
+      - ENV=cluster
     volumes:
       - '../data-test:/tmp/data-test'
       - '../db-test:/tmp/db-test'

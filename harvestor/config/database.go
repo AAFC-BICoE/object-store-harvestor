@@ -1,19 +1,15 @@
+// Package config provides a functionality to read from yml config file
+// and provides values for each key in the file
+// the package is splitted into multiple for simplicity and readability
+// SQLite config
 package config
 
-/*
-Example :
-  MaxOpenConns : 2 # Number of max Open connections to SQLite DB
-  MaxIdleConns : 2 # Number of max Idle connections with SQLite DB
-  ConnMaxLifetime : 2 # If there is no activity in 2 minutes Idle connections will be destroyed
-  DbName: "/tmp/harvestor.db" # for now this is only for Debug
-*/
-
-// place holder for now
+// SQLite config struct
 type DatabaseConfiguration struct {
-	MaxOpenConns    int
-	MaxIdleConns    int
-	ConnMaxLifetime int
-	DbFile          string
+	MaxOpenConns    int    // Number of max Open connections to SQLite DB
+	MaxIdleConns    int    // Number of max Idle connections with SQLite DB
+	ConnMaxLifetime int    // Number of minutes connection will live
+	DbFile          string // Path to SQLite DB
 }
 
 // Define all interfaces for this struct

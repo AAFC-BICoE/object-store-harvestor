@@ -23,6 +23,7 @@ httpclient:
   uploadGroup: "dev-group"
   meta: "/api/v1/metadata"
   managedmeta: "/api/v1/managed-attribute-map"
+  derivative: "/api/v1/derivative"
 
 keycloak:
   # !!! Important !!!

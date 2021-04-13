@@ -1,18 +1,22 @@
 package db
 
 import (
+	"harvestor/config"
+	l "harvestor/logger"
 	"os"
 	"time"
 )
 
 type Sidecar struct {
-	ID        int       `json:"id" gorm:"AUTO_INCREMENT; PRIMARY_KEY"`
-	Path      string    `json:"path" gorm:"uniqueIndex"`
-	FileID    int       `json:"file_id" sql:"not null" gorm:"unique_index:idx_sidecard_file"`
-	Status    string    `json:"status" gorm:"type:varchar(64)"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
-	File      File      `gorm:"foreignkey:FileID"`
+	ID               int       `json:"id" gorm:"AUTO_INCREMENT; PRIMARY_KEY"`
+	Path             string    `json:"path" gorm:"uniqueIndex"`
+	OriginalFileID   int       `json:"original_file_id" gorm:"unique_index:idx_sidecard_original_file"`
+	DerivativeFileID int       `json:"derivative_file_id" gorm:"unique_index:idx_sidecard_derivative_file"`
+	SidecarStatus    string    `json:"sidecar_status" gorm:"type:varchar(64)"`
+	CreatedAt        time.Time `json:"created_at"`
+	UpdatedAt        time.Time `json:"updated_at"`
+	OriginalFile     File      `gorm:"foreignkey:OriginalFileID"`
+	DerivativeFile   File      `gorm:"foreignkey:DerivativeFileID"`
 }
 
 // Define all interfaces for this struct
@@ -22,7 +26,10 @@ type ISidecar interface {
 	GetStatus() string
 	GetCreatedAt() time.Time
 	GetUpdatedAt() time.Time
-	Create(path string, info os.FileInfo) error
+	GetOriginalFile() File
+	GetDerivativeFile() File
+	CreateSidecar(path string, info os.FileInfo) (*Sidecar, error)
+	CreateSidecarRecord(s *Sidecar) error
 }
 
 // Implementation
@@ -34,12 +41,16 @@ func (s Sidecar) GetPath() string {
 	return s.Path
 }
 
-func (s Sidecar) GetFileID() int {
-	return s.FileID
+func (s Sidecar) GetOriginalFile() File {
+	return s.OriginalFile
+}
+
+func (s Sidecar) GetDerivativeFile() File {
+	return s.DerivativeFile
 }
 
 func (s Sidecar) GetStatus() string {
-	return s.Status
+	return s.SidecarStatus
 }
 
 func (s Sidecar) GetCreatedAt() time.Time {
@@ -50,10 +61,46 @@ func (s Sidecar) GetUpdatedAt() time.Time {
 	return s.UpdatedAt
 }
 
-func CreateSidecar(s *Sidecar) error {
+func CreateSidecar(path string, info os.FileInfo) (*Sidecar, error) {
+	// get config
+	conf := config.GetConf()
+	// define absolute path
+	absolutePath := conf.Walker.Path() + string(os.PathSeparator) + path
+	// define basic sidecar
+	s := &Sidecar{
+		Path:          absolutePath,
+		SidecarStatus: "new",
+	}
+	// create sidecar record in the db
+	err := CreateSidecarRecord(s)
+
+	return s, err
+}
+
+func CreateSidecarRecord(s *Sidecar) error {
+	// double check if the record already there or not
+	if len(s.GetPath()) != 0 && doesSidecarNotExist(s.GetPath()) {
+		db := GetHarvesterDB()
+		err := db.Create(s).Error
+		return err
+	}
+	return nil
+}
+
+// get all sidecars with status "new"
+func GetNewSidecars(sidecars *[]Sidecar) {
+	var logger = l.NewLogger()
 	db := GetHarvesterDB()
-	err := db.Create(s).Error
-	return err
+	db.Where("sidecar_status = ?", "new").Joins("OriginalFile").Joins("DerivativeFile").Find(sidecars)
+	logger.Debug("Found for upload total sidecars : ", len(*sidecars))
+}
+
+// check by absolute path if the sidecar exist in DB already
+func doesSidecarNotExist(absolutePath string) bool {
+	var sidecars []Sidecar
+	db := GetHarvesterDB()
+	db.Where("path = ?", absolutePath).Find(&sidecars)
+	return len(sidecars) == 0
 }
 
 // Get sidecar record from DB by file record from DB
@@ -64,4 +111,17 @@ func GetSideCarByFile(file *File) (*Sidecar, error) {
 		return &sidecar, err
 	}
 	return &sidecar, nil
+}
+
+// change status of sidecar
+func SetSidecarStatus(s *Sidecar, status string) error {
+	// get logger
+	var logger = l.NewLogger()
+	db := GetHarvesterDB()
+	s.SidecarStatus = status
+	err := db.Save(s).Error
+	if err == nil {
+		logger.Info("Sidecar record has been '"+status+"' for : ", s.GetPath())
+	}
+	return err
 }
