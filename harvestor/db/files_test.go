@@ -1,23 +1,23 @@
 package db
 
 import (
-	"github.com/stretchr/testify/assert"
-	"harvestor/config"
+	_ "github.com/stretchr/testify/assert"
+	_ "harvestor/config"
 	_ "os"
 	"testing"
 )
 
 func TestDbFile(t *testing.T) {
-	file := "../harvestor_config.yml"
-	config.Load(file)
-	Init()
-	db := GetHarvesterDB()
-	assert.NotNil(t, db)
-	// testing file path
-	filePath := "/tmp/data-test/images/2021/03/07/screen_files.png"
-	// check if exist
-	assert.Equal(t, false, DoesFileExist(filePath))
 	/*
+		file := "../harvestor_config.yml"
+		config.Load(file)
+		Init()
+		db := GetHarvesterDB()
+		assert.NotNil(t, db)
+		// testing file path
+		filePath := "/tmp/data-test/images/2021/03/07/screen_files.png"
+		// check if exist
+		assert.Equal(t, false, DoesFileExist(filePath))
 		// get stats
 		fileStat, err := os.Stat(filePath)
 		// checking errors
