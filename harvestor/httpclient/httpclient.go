@@ -39,7 +39,7 @@ func ClusterRun() {
 	// Phase II
 	// Building relations
 	// dealing with brand new sidecars
-	processNewSidecars()
+	processNewRelations()
 }
 
 // http client for PC
@@ -52,7 +52,7 @@ func PcRun() {
 	processStuckedFiles()
 }
 
-func processNewSidecars() {
+func processNewRelations() {
 	// Getting logger
 	logger := l.NewLogger()
 	// init an empty slice of new sidecars

@@ -58,8 +58,7 @@ func (u Upload) GetUpdatedAt() time.Time {
 // Create uplod record in DB
 func CreateUpload(u *Upload) error {
 	db := GetHarvesterDB()
-	err := db.Create(u).Error
-	return err
+	return db.Create(u).Error
 }
 
 // Get upload record from DB by file record from DB

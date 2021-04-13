@@ -50,16 +50,22 @@ func processSidecarFromWalker(path string, info os.FileInfo) error {
 	if err != nil {
 		return err
 	}
+	logger.Debug(" sidecarFile : ", logger.PrettyGoStruct(sidecarFile))
 	// about to create a record in DB for original file from sidecar
-	fileRecordOriginal, err := createFileRecord(getAbsoluteOriginalPath(sidecarFile, absolutePath))
+	logger.Debug(" getAbsoluteOriginalPath(sidecarFile, absolutePath) : ", getAbsoluteOriginalPath(sidecarFile, absolutePath))
+	fileRecordOriginal, err := createFileRecordOriginal(getAbsoluteOriginalPath(sidecarFile, absolutePath))
 	if err != nil {
+		logger.Error(" createFileRecordOriginal : ", err)
 		return err
 	}
+	logger.Debug(" sidecarFile : ", logger.PrettyGoStruct(sidecarFile))
 	// about to create a record in DB for derivative file from sidecar
-	fileRecordDerivative, err := createFileRecord(getAbsoluteDerivativePath(sidecarFile, absolutePath))
+	fileRecordDerivative, err := createFileRecordDerivative(getAbsoluteDerivativePath(sidecarFile, absolutePath))
 	if err != nil {
+		logger.Error(" createFileRecordDerivative : ", err)
 		return err
 	}
+	logger.Debug(" sidecarFile : ", logger.PrettyGoStruct(sidecarFile))
 	// about to create a record in DB for sidecar
 	s := &db.Sidecar{
 		Path:             absolutePath,
@@ -179,47 +185,7 @@ func HasSideCar(path string) bool {
 	return true
 }
 
-/*
-func CreateSideCarByFile(file *db.File) error {
-	// init logger
-	var logger = l.NewLogger()
-	// init conf
-	conf := config.GetConf()
-	if !conf.SideCar.IsEnabled() {
-		return nil
-	}
-	logger.Debug("Walker:SideCar found :", file.GetPath())
-	if HasSideCar(file.GetPath()) {
-		// Read the content of yml sidecar file
-		sideCarContent, err := GetSidecarYmlFileByFile(file)
-		// check if the current file is the Original
-		if err == nil && sideCarContent.Original == file.GetName() {
-			var s = db.Sidecar{
-				Path:   GetSideCarPathByFilePath(file.GetPath()),
-				Status: "new",
-				FileID: file.GetID(),
-			}
-			err := db.CreateSidecar(&s)
-			if err != nil {
-				errMsg := "SideCar record CAN NOT be stored in DB for :"
-				logger.Fatal(errMsg, s.GetPath(), err)
-				return err
-			}
-			logger.Info("SideCar record has been stored in DB for :", s.GetPath())
-			logger.Debug("DB side car record : ", logger.PrettyGoStruct(s))
-			return err
-		}
-	}
-	return nil
-}
-*/
-
 // check if the config type supported
 func isValidConfigFile(file string) bool {
 	return getFileExtension(file) == ValidConfigFileExtension
-}
-
-// get file name without extension
-func getFileName(file string) string {
-	return strings.TrimSuffix(file, filepath.Ext(file))
 }

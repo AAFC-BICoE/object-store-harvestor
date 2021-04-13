@@ -50,6 +50,9 @@ go test ./... -v -coverprofile /tmp/cover.out
 # generate coverage html file
 echo "||| testing ..."
 go tool cover -html=/tmp/cover.out -o /tmp/cover.html
+# clean up after test
+# rm -fr /tmp/db-test/harvestor.db
+echo "DB /tmp/db-test/harvestor.db has been removed ..."
 # building the artifact
 echo "||| building the artifact ..."
 go build -o main .

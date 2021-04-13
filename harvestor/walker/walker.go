@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"harvestor/config"
-	"harvestor/db"
 	l "harvestor/logger"
 	"os"
 	"path/filepath"
@@ -63,7 +62,7 @@ func walkImagesFunc(path string, info os.FileInfo, err error) error {
 	absolutePath := getAbsolutePath(path)
 	logger.Debug("walker absolutePath :", absolutePath)
 	if !info.IsDir() && isInterest(info) {
-		_, err := db.CreateFile(path, info)
+		_, err := createFileRecordOriginal(absolutePath)
 		if err != nil {
 			logger.Error("Walker:File:Create :", err)
 		}
@@ -328,11 +327,6 @@ func WalkWithSymlinks(root string, walkFn filepath.WalkFunc) error {
 	return w.Walk("", walkFn)
 }
 
-// get file extension
-func getFileExtension(filename string) string {
-	return strings.ToLower(strings.TrimPrefix(filepath.Ext(filename), "."))
-}
-
 // check if we are interested in the current file
 func isInterest(info os.FileInfo) bool {
 	// init logger
@@ -368,25 +362,4 @@ func getAbsolutePath(path string) string {
 	return conf.Walker.Path() +
 		string(os.PathSeparator) +
 		path
-}
-
-func createFileRecord(filePath string) (*db.File, error) {
-	// init logger
-	var logger = l.NewLogger()
-	// init empty file db struct
-	var fileRecord *db.File
-	// get stats
-	fileStat, err := os.Stat(filePath)
-	if err != nil {
-		logger.Fatal("Can't get stats for : ", filePath, " details : ", err)
-		return fileRecord, err
-	}
-
-	// getting the record from DB after create
-	fileRecord, err = db.CreateFile(filePath, fileStat)
-	if err != nil {
-		logger.Fatal("Can't create db record for file : ", filePath, " details : ", err)
-		return fileRecord, err
-	}
-	return fileRecord, err
 }

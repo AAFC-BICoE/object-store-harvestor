@@ -43,8 +43,7 @@ func (m Meta) GetUpdatedAt() time.Time {
 // Create meta record in DB
 func CreateMeta(m *Meta) error {
 	db := GetHarvesterDB()
-	err := db.Create(m).Error
-	return err
+	return db.Create(m).Error
 }
 
 // Get meta record from DB by file record from DB

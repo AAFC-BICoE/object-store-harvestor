@@ -28,6 +28,9 @@ func uplaodImage(image *db.File) (db.Upload, error) {
 		conf.HttpClient.GetUploadUri() +
 		"/" +
 		conf.HttpClient.GetUploadGroup()
+	if image.GetUploadType() == "derivative" {
+		url = url + "/derivative"
+	}
 	logger.Debug("post upload url : ", url)
 
 	// allocate a buffer

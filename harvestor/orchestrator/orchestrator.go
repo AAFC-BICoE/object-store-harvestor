@@ -27,6 +27,9 @@ func Run() {
 	// TODO Development
 	// Future development for for PC of scientists
 	if conf.App.GetEnvironment() == "PC" {
+		// TODO
+		logger.Fatal("PC Run NOT SUPPORTED YET")
+		// ...
 		logger.Info("Orchestrator is about to run on the PC ...")
 		walker.PcRun()
 		httpclient.PcRun()

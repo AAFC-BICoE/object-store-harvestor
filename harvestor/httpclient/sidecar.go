@@ -72,7 +72,6 @@ func postSideCarManagedMeta(sidecar *db.Sidecar) error {
 	var logger = l.NewLogger()
 	// init conf
 	conf := config.GetConf()
-	logger.Debug(" sidecar : ", logger.PrettyGoStruct(sidecar))
 	// TODO Unknown
 	// TODO Do we need to upload managed meta against Original or Derivative?
 	file := sidecar.GetOriginalFile()
@@ -80,20 +79,17 @@ func postSideCarManagedMeta(sidecar *db.Sidecar) error {
 	if err != nil {
 		logger.Fatal("postSideCarManagedMeta on db.GetMetaByFile err : ", err)
 	}
-
 	// define url for managed meta
 	url := conf.HttpClient.GetBaseApiUrl() + conf.HttpClient.GetManagedMetaUri()
-	logger.Debug("post managed meta url : ", url)
-
+	logger.Debug("post managed meta : url : ", url)
 	// Read the content of yml sidecar file
 	scf, err := walker.GetSidecarYmlFile(sidecar)
 	if err != nil {
 		return err
 	}
-
-	logger.Debug("postSideCarManagedMeta : file : ", logger.PrettyGoStruct(file))
-	logger.Debug("postSideCarManagedMeta : meta : ", logger.PrettyGoStruct(meta))
-	logger.Debug("postSideCarManagedMeta : sidecar : ", logger.PrettyGoStruct(scf))
+	logger.Debug("post managed meta : file : ", logger.PrettyGoStruct(file))
+	logger.Debug("post managed meta : meta : ", logger.PrettyGoStruct(meta))
+	logger.Debug("post managed meta : sidecar : ", logger.PrettyGoStruct(scf))
 	// loop managed attributes as key value
 	// POST will be done for eaxh key value pair
 	for key, value := range scf.ManagedAttributes {
@@ -105,12 +101,13 @@ func postSideCarManagedMeta(sidecar *db.Sidecar) error {
 			logger.Error(" json.Marshal fail details :", err)
 			return err
 		}
-
+		// Create new request
 		req, err := c.NewRequest("POST", url, bytes.NewBuffer(payload))
 		if err != nil {
 			logger.Error(" New request Errors :", err)
 			return err
 		}
+		// set request headers
 		req.Header.Set("Content-Type", "application/vnd.api+json")
 		// check if we need Authorization
 		if conf.Keycloak.IsEnabled() {
@@ -119,20 +116,21 @@ func postSideCarManagedMeta(sidecar *db.Sidecar) error {
 		}
 		// custom header for https://www.crnk.io/releases/stable/documentation/
 		req.Header.Add("crnk-compact", "true")
-
+		// make request
 		resp, err := httpClient.Do(req)
+		// check errors from response
 		if err != nil {
-			logger.Error(" post managed meta fail details :", err)
+			logger.Error("post managed meta fail details :", err)
 			return err
 		}
 		// TODO Maybe we need a common package for HTTP response status codes
 		// Check on response status 401
 		if resp.StatusCode == http.StatusUnauthorized {
-			logger.Fatal("Error : You are Unauthorized for Managed MetaData, Please check your config file")
+			logger.Fatal("Fatal Error : You are Unauthorized for Managed MetaData, Please check your config file")
 		}
 		// Check on response status 403
 		if resp.StatusCode == http.StatusForbidden {
-			logger.Fatal("Error : You are Forbidden from Managed MetaData, Please check your config file")
+			logger.Fatal("Fatal Error : You are Forbidden from Managed MetaData, Please check your config file")
 		}
 		// Check on response status 201
 		if resp.StatusCode == http.StatusCreated {
@@ -140,12 +138,12 @@ func postSideCarManagedMeta(sidecar *db.Sidecar) error {
 			defer resp.Body.Close()
 			// read the body
 			b, err := io.ReadAll(resp.Body)
-			logger.Debug(" post managed meta response body : ", string(b))
+			logger.Debug("post managed meta response body : ", string(b))
 			if err != nil {
-				logger.Error(" error on read body : ", err)
+				logger.Error("error on read body : ", err)
 				return err
 			}
-			logger.Debug(" Managed meta record has been posted : ", logger.PrettyGoStruct(postData))
+			logger.Debug("Managed meta record has been posted : ", logger.PrettyGoStruct(postData))
 
 		} else {
 			// all other use cases are not allowed
@@ -153,9 +151,9 @@ func postSideCarManagedMeta(sidecar *db.Sidecar) error {
 			// something is really not right here
 			b, err := io.ReadAll(resp.Body)
 			if err != nil {
-				logger.Fatal(" error on read body : ", err)
+				logger.Fatal("error on read body : ", err)
 			}
-			logger.Fatal("Error : Status code : (", resp.StatusCode, ") details : ", string(b))
+			logger.Fatal("Fatal Error : Status code : (", resp.StatusCode, ") details : ", string(b))
 		}
 
 	}
@@ -169,55 +167,52 @@ func postSideCarDerivative(sidecar *db.Sidecar) error {
 	var logger = l.NewLogger()
 	// init conf
 	conf := config.GetConf()
-	// init logger
-	logger.Debug(" sidecar : ", logger.PrettyGoStruct(sidecar))
-
 	// TODO Unknown
 	// TODO Do we need to upload managed meta against Original or Derivative?
 	originalFile := sidecar.GetOriginalFile()
 	meta, err := db.GetMetaByFile(&originalFile)
 	if err != nil {
-		logger.Fatal("postSideCarDerivative on db.GetMetaByFile err : ", err)
+		logger.Fatal("Fatal Error : postSideCarDerivative on db.GetMetaByFile err : ", err)
 	}
-	logger.Debug(" postSideCarManagedMeta : meta : ", logger.PrettyGoStruct(meta))
-
+	// get derivative file
 	derivativeFile := sidecar.GetDerivativeFile()
+	// get derivative upload
 	upload, err := db.GetUploadByFile(&derivativeFile)
+	// checking on errors
 	if err != nil {
-		logger.Fatal("postSideCarDerivative on db.GetUploadByFile err : ", err)
+		logger.Fatal("Fatal Error : postSideCarDerivative on db.GetUploadByFile err : ", err)
 	}
-
 	// define url for derivative
 	url := conf.HttpClient.GetBaseApiUrl() + conf.HttpClient.GetDerivativeUri()
 	logger.Debug("post derivative url : ", url)
-
 	// Read the content of yml sidecar file
 	scf, err := walker.GetSidecarYmlFile(sidecar)
 	// Loading sidecar and checking if derivative is set
 	if err != nil {
 		return err
 	}
-	logger.Debug("postSideCarDerivative : originalFile : ", logger.PrettyGoStruct(originalFile))
-	logger.Debug("postSideCarDerivative : derivativeFile : ", logger.PrettyGoStruct(derivativeFile))
-	logger.Debug("postSideCarDerivative : meta : ", logger.PrettyGoStruct(meta))
-	logger.Debug("postSideCarDerivative : upload : ", logger.PrettyGoStruct(upload))
-	logger.Debug("postSideCarDerivative : sidecar : ", logger.PrettyGoStruct(scf))
+	logger.Debug("post derivative : original file : ", logger.PrettyGoStruct(originalFile))
+	logger.Debug("post derivative : derivative file : ", logger.PrettyGoStruct(derivativeFile))
+	logger.Debug("post derivative : original meta : ", logger.PrettyGoStruct(meta))
+	logger.Debug("post derivative : derivative upload : ", logger.PrettyGoStruct(upload))
+	logger.Debug("post derivative : sidecar : ", logger.PrettyGoStruct(scf))
 
 	// populate post data struct
 	postData := getDerivativePostData(upload, meta)
-	logger.Debug("postSideCarDerivative : postData : ", logger.PrettyGoStruct(postData))
+	logger.Debug("post derivative : postData : ", logger.PrettyGoStruct(postData))
 	payload, err := json.Marshal(*postData)
 	logger.Debug(" post derivative payload : ", string(payload))
 	if err != nil {
-		logger.Error(" json.Marshal fail details :", err)
+		logger.Error("json.Marshal fail details :", err)
 		return err
 	}
-
+	// make new request
 	req, err := c.NewRequest("POST", url, bytes.NewBuffer(payload))
 	if err != nil {
-		logger.Error(" New request Errors :", err)
+		logger.Error("New request Errors :", err)
 		return err
 	}
+	// set headers
 	req.Header.Set("Content-Type", "application/vnd.api+json")
 	// check if we need Authorization
 	if conf.Keycloak.IsEnabled() {
@@ -226,8 +221,9 @@ func postSideCarDerivative(sidecar *db.Sidecar) error {
 	}
 	// custom header for https://www.crnk.io/releases/stable/documentation/
 	req.Header.Add("crnk-compact", "true")
-
+	// make reqoest
 	resp, err := httpClient.Do(req)
+	// checking on errors from request
 	if err != nil {
 		logger.Error(" post derivative fail details :", err)
 		return err
@@ -299,9 +295,9 @@ func getMetaPostData(key string, value string, meta *db.Meta) *PostSidecar {
 	return &PostSidecar{
 		*postSidecarData,
 	}
-
 }
 
+// Helper functionis to build full struct for post data
 func getDerivativePostData(upload *db.Upload, meta *db.Meta) *PostSidecarDerivative {
 	// uuid of the managed attribute with value
 	postAttributes := &PostSidecarDerivativeAttributes{
@@ -328,5 +324,4 @@ func getDerivativePostData(upload *db.Upload, meta *db.Meta) *PostSidecarDerivat
 	return &PostSidecarDerivative{
 		*postSidecarData,
 	}
-
 }

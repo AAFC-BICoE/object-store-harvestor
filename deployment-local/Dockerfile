@@ -17,7 +17,12 @@ RUN go mod vendor
 RUN go get -v -d ./...
 
 # - - - TESTS - - - #
-# define working directory
+# Copy test set of media files
+COPY data-test /tmp/data-test
+# folder for test SQLite DB
+RUN mkdir /tmp/db-test
+# folder for test logs
+RUN mkdir /tmp/log-test
 # Running tests
 RUN go test ./... -v -coverprofile cover.out
 # Output html coverage report to /tmp/cover.html
