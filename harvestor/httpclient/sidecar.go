@@ -72,10 +72,12 @@ func postSideCarManagedMeta(sidecar *db.Sidecar) error {
 	var logger = l.NewLogger()
 	// init conf
 	conf := config.GetConf()
-	// TODO Unknown
-	// TODO Do we need to upload managed meta against Original or Derivative?
+	// Need to upload managed meta against Original
+	// Get Original file from current sidecar
 	file := sidecar.GetOriginalFile()
+	// Get Original meta from DB
 	meta, err := db.GetMetaByFile(&file)
+	// Checking on errors
 	if err != nil {
 		logger.Fatal("postSideCarManagedMeta on db.GetMetaByFile err : ", err)
 	}
@@ -167,10 +169,12 @@ func postSideCarDerivative(sidecar *db.Sidecar) error {
 	var logger = l.NewLogger()
 	// init conf
 	conf := config.GetConf()
-	// TODO Unknown
-	// TODO Do we need to upload managed meta against Original or Derivative?
+	// Need to upload managed meta against Original
+	// Get Original file from current sidecar
 	originalFile := sidecar.GetOriginalFile()
+	// Get Original meta from DB
 	meta, err := db.GetMetaByFile(&originalFile)
+	// Checking on errors
 	if err != nil {
 		logger.Fatal("Fatal Error : postSideCarDerivative on db.GetMetaByFile err : ", err)
 	}
