@@ -103,16 +103,6 @@ func doesSidecarNotExist(absolutePath string) bool {
 	return len(sidecars) == 0
 }
 
-// Get sidecar record from DB by file record from DB
-func GetSideCarByFile(file *File) (*Sidecar, error) {
-	db := GetHarvesterDB()
-	var sidecar Sidecar
-	if err := db.Where("file_id = ?", file.GetID()).Find(&sidecar).Error; err != nil {
-		return &sidecar, err
-	}
-	return &sidecar, nil
-}
-
 // change status of sidecar
 func SetSidecarStatus(s *Sidecar, status string) error {
 	// get logger
