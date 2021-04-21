@@ -127,7 +127,9 @@ func processNewFile(file *db.File) {
 	if err == nil {
 		db.SetFileStatus(file, "uploaded")
 		// try to post meta
-		_, err := postMeta(&upload)
+		if file.GetUploadType() == "original" {
+			_, err = postMeta(&upload)
+		}
 		//meta, err := postMeta(&upload)
 		// if all good set the status of the file as "completed"
 		if err == nil {
