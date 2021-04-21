@@ -29,11 +29,11 @@ echo "/tmp/data-test has been removed ..."
 rm -fr /tmp/log-test
 echo "/tmp/log-test has been removed ..."
 # prepare test data set
-mkdir -p /tmp/db-test/
+mkdir -p /tmp/db-test
 echo "/tmp/db-test has been set ..."
 cp -R ../data-test /tmp/
 echo "/tmp/data-test has been set ..."
-mkdir -p /tmp/log-test/
+mkdir -p /tmp/log-test
 echo "/tmp/log-test has been set ..."
 
 ####################
