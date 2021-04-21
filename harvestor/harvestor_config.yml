@@ -56,4 +56,4 @@ app:
   # Bio cluster or PC
   env: "cluster"
   # EXIF does not provide timezone information so the following timezone will be used for the objects uploaded by the harvestor
-  objectTimezone: "EST"
+  objectTimezone: "America/New_York"

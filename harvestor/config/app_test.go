@@ -34,6 +34,6 @@ func TestGetObjectTimezone(t *testing.T) {
 	var file = "../harvestor_config.yml"
 	Load(file)
 	conf := GetConf()
-	want := "EST"
+	want := "America/New_York"
 	assert.Equal(t, want, conf.App.GetObjectTimezone())
 }

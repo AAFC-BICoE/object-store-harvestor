@@ -50,6 +50,7 @@ func postMeta(upload *db.Upload) (db.Meta, error) {
 	logger.Debug("post meta url : ", url)
 	// setting local for Ottawa, ON, Canada
 	local, err := time.LoadLocation(conf.App.GetObjectTimezone())
+	//time.LoadLocation(conf.App.GetObjectTimezone())
 	if err != nil {
 		// just logging error for now
 		logger.Error(" Error on LoadLocation for ", conf.App.GetObjectTimezone(), " :", err)
