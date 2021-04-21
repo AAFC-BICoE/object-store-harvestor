@@ -25,6 +25,7 @@ type PostSidecarAttributes struct {
 	Values map[string]*PostSidecarValue `json:"values"`
 }
 type PostSidecarDerivativeAttributes struct {
+	DerivativeType string `json:"derivativeType"`
 	DcType         string `json:"dcType"`
 	FileIdentifier string `json:"fileIdentifier"`
 }
@@ -305,6 +306,7 @@ func getMetaPostData(key string, value string, meta *db.Meta) *PostSidecar {
 func getDerivativePostData(upload *db.Upload, meta *db.Meta) *PostSidecarDerivative {
 	// uuid of the managed attribute with value
 	postAttributes := &PostSidecarDerivativeAttributes{
+		"LARGE_IMAGE",
 		"Image",
 		upload.GetFileIdentifier(),
 	}
