@@ -9,6 +9,7 @@ import (
 	l "harvestor/logger"
 	"io"
 	"net/http"
+	"time"
 )
 
 // structs for http POST
@@ -47,8 +48,14 @@ func postMeta(upload *db.Upload) (db.Meta, error) {
 	// define full resource URL
 	url := conf.HttpClient.GetBaseApiUrl() + conf.HttpClient.GetMetaUri()
 	logger.Debug("post meta url : ", url)
+	// setting local for Ottawa, ON, Canada
+	local, err := time.LoadLocation(conf.App.GetObjectTimezone())
+	if err != nil {
+		// just logging error for now
+		logger.Error(" Error on LoadLocation for ", conf.App.GetObjectTimezone(), " :", err)
+	}
 	// pulling the date as a string to match java.time.OffsetDateTime format on API server
-	var ds = upload.GetDateTimeDigitized().UTC().Format("2006-01-02T15:04:05-0700")
+	var ds = upload.GetDateTimeDigitized().In(local).Format("2006-01-02T15:04:05-0700")
 	// assign the pointer
 	var dateTimeDigitized = &ds
 	// checking if the GetDateTimeDigitized is actually zero

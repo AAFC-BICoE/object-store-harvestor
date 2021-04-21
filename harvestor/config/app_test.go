@@ -29,3 +29,11 @@ func TestGetEnvironment(t *testing.T) {
 	want := "cluster"
 	assert.Equal(t, want, conf.App.GetEnvironment())
 }
+
+func TestGetObjectTimezone(t *testing.T) {
+	var file = "../harvestor_config.yml"
+	Load(file)
+	conf := GetConf()
+	want := "EST"
+	assert.Equal(t, want, conf.App.GetObjectTimezone())
+}
