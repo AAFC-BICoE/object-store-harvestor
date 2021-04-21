@@ -13,9 +13,9 @@ import (
 
 // structs for http POST
 type PostAttributes struct {
-	FileIdentifier string `json:"fileIdentifier"`
-	Bucket         string `json:"bucket"`
-	//DateTimeDigitized time.Time `json:"acDigitizationDate"`
+	FileIdentifier    string  `json:"fileIdentifier"`
+	Bucket            string  `json:"bucket"`
+	DateTimeDigitized *string `json:"acDigitizationDate"` // this is a pointer, since we need to support Null value in json
 }
 type PostData struct {
 	Type           string         `json:"type"`
@@ -47,11 +47,19 @@ func postMeta(upload *db.Upload) (db.Meta, error) {
 	// define full resource URL
 	url := conf.HttpClient.GetBaseApiUrl() + conf.HttpClient.GetMetaUri()
 	logger.Debug("post meta url : ", url)
+	// pulling the date as a string to match java.time.OffsetDateTime format on API server
+	var ds = upload.GetDateTimeDigitized().UTC().Format("2006-01-02T15:04:05-0700")
+	// assign the pointer
+	var dateTimeDigitized = &ds
+	// checking if the GetDateTimeDigitized is actually zero
+	if upload.GetDateTimeDigitized().IsZero() {
+		// in case it's we nil the pointer to make sure it will be picked in json as NUll
+		dateTimeDigitized = nil
+	}
 	postAttributes := &PostAttributes{
-		upload.GetFileIdentifier(),
-		upload.GetBucket(),
-		// TODO may be WIP
-		//upload.GetDateTimeDigitized(),
+		FileIdentifier:    upload.GetFileIdentifier(),
+		Bucket:            upload.GetBucket(),
+		DateTimeDigitized: dateTimeDigitized,
 	}
 	// Building payload
 	postData := &PostData{"metadata", *postAttributes}
