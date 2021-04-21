@@ -115,3 +115,11 @@ func SetSidecarStatus(s *Sidecar, status string) error {
 	}
 	return err
 }
+
+// look up Sidecar record in DB by path
+func GetSidecarByPath(path string) (*Sidecar, error) {
+	var s Sidecar
+	db := GetHarvesterDB()
+	err := db.Where("path = ?", path).First(&s).Error
+	return &s, err
+}

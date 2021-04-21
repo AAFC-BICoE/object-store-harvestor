@@ -33,8 +33,8 @@ var ValidConfigFileExtension = "yml"
 var conf Configuration
 
 // Getting Configuration struct
-func GetConf() Configuration {
-	return conf
+func GetConf() *Configuration {
+	return &conf
 }
 
 // Loading from yml config file into our struct

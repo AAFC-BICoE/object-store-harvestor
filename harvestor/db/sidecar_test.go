@@ -52,6 +52,24 @@ func TestDbSideCarCreate(t *testing.T) {
 	assert.Equal(t, "new", sr.GetStatus())
 }
 
+func TestDbSideCarGet(t *testing.T) {
+	file := "../harvestor_config.yml"
+	config.Load(file)
+	// init db
+	Init()
+	db := GetHarvesterDB()
+	// cheking db pointer
+	assert.NotNil(t, db)
+	// testing file path
+	filePath := "/tmp/data-test/images/2021/03/07/screen_meta.yml"
+	// get db record
+	sr, err := GetSidecarByPath(filePath)
+	// checking errors
+	assert.Nil(t, err)
+	assert.Equal(t, 1, sr.GetID())
+	assert.Equal(t, "new", sr.GetStatus())
+}
+
 func TestDbSideCarExist(t *testing.T) {
 	file := "../harvestor_config.yml"
 	config.Load(file)
