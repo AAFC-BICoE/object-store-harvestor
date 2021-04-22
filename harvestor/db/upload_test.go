@@ -41,7 +41,7 @@ func TestDbCreateUpload(t *testing.T) {
 		UploadID:          1,
 		FileIdentifier:    "bd56bc1a-07d0-4e01-a95f-c96c94aa3659",
 		Bucket:            "cnc",
-		DateTimeDigitized: now,
+		DateTimeDigitized: nil,
 		FileID:            1,
 		CreatedAt:         now,
 		UpdatedAt:         now,
@@ -51,5 +51,4 @@ func TestDbCreateUpload(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, now, u.GetUpdatedAt())
 	assert.Equal(t, now, u.GetCreatedAt())
-	assert.Equal(t, now, u.GetDateTimeDigitized())
 }

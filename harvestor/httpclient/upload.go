@@ -112,6 +112,7 @@ func uplaodImage(image *db.File) (db.Upload, error) {
 		logger.Debug("about to unmarshal response body : ", string(b))
 		// unmarshal body to upload struct
 		err = json.Unmarshal(b, &uplaod)
+		logger.Debug("DB upload record before create : ", logger.PrettyGoStruct(uplaod))
 		if err != nil {
 			logger.Error(" error on unmarshal body : ", err)
 			return uplaod, err
