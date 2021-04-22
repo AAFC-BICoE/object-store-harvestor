@@ -9,6 +9,7 @@ import (
 	l "harvestor/logger"
 	"io"
 	"net/http"
+	"time"
 )
 
 // structs for http POST
