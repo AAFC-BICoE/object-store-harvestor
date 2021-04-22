@@ -23,7 +23,7 @@ type IUpload interface {
 	GetID() int
 	GetFileIdentifier() string
 	GetBucket() string
-	GetDateTimeDigitized() time.Time
+	GetDateTimeDigitized() *string
 	GetCreatedAt() time.Time
 	GetUpdatedAt() time.Time
 	Create() error

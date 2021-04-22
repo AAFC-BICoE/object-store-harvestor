@@ -23,14 +23,16 @@ func TestUpload(t *testing.T) {
 	// helper var
 	now := time.Now()
 	// getting upload struct to return from mock server
+	dtd := "2019-11-06T10:21:31"
 	u := db.Upload{
-		ID:             5,
-		UploadID:       55,
-		FileIdentifier: "d64d9cdc-644b-4946-9b86-91ef820810a8",
-		Bucket:         "cnc",
-		FileID:         1,
-		CreatedAt:      now,
-		UpdatedAt:      now,
+		ID:                5,
+		UploadID:          55,
+		FileIdentifier:    "d64d9cdc-644b-4946-9b86-91ef820810a8",
+		Bucket:            "cnc",
+		FileID:            1,
+		DateTimeDigitized: &dtd,
+		CreatedAt:         now,
+		UpdatedAt:         now,
 	}
 	// struct to json
 	jData, err := json.Marshal(u)
