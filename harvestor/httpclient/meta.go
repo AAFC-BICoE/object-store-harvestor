@@ -48,6 +48,7 @@ func postMeta(upload *db.Upload) (db.Meta, error) {
 	// define full resource URL
 	url := conf.HttpClient.GetBaseApiUrl() + conf.HttpClient.GetMetaUri()
 	logger.Debug("post meta url : ", url)
+	// checking if the GetDateTimeDigitized is actually zero
 	postAttributes := &PostAttributes{
 		FileIdentifier:    upload.GetFileIdentifier(),
 		Bucket:            upload.GetBucket(),
