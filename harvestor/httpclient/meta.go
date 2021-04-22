@@ -51,7 +51,7 @@ func postMeta(upload *db.Upload) (db.Meta, error) {
 	postAttributes := &PostAttributes{
 		FileIdentifier:    upload.GetFileIdentifier(),
 		Bucket:            upload.GetBucket(),
-		DateTimeDigitized: nil,
+		DateTimeDigitized: upload.GetDateTimeDigitized(),
 	}
 	if upload.GetDateTimeDigitized() != nil {
 		layout := "2006-01-02T15:04:05"
