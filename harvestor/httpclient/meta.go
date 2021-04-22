@@ -9,7 +9,6 @@ import (
 	l "harvestor/logger"
 	"io"
 	"net/http"
-	"time"
 )
 
 // structs for http POST
@@ -53,25 +52,6 @@ func postMeta(upload *db.Upload) (db.Meta, error) {
 		FileIdentifier:    upload.GetFileIdentifier(),
 		Bucket:            upload.GetBucket(),
 		DateTimeDigitized: upload.GetDateTimeDigitized(),
-	}
-	if upload.GetDateTimeDigitized() != nil {
-		layout := "2006-01-02T15:04:05"
-		dtd := upload.GetDateTimeDigitized()
-		loc, err := time.LoadLocation(conf.App.GetObjectTimezone())
-		if err != nil {
-			logger.Fatal("time.LoadLocation :", err)
-		}
-		t, err := time.ParseInLocation(layout, *dtd, loc)
-		if err != nil {
-			logger.Fatal(" time.Parse :", err)
-		}
-		fixedTime := t.Format(time.RFC3339)
-		logger.Debug(" Fixed DateTimeDigitized :", fixedTime)
-		postAttributes = &PostAttributes{
-			FileIdentifier:    upload.GetFileIdentifier(),
-			Bucket:            upload.GetBucket(),
-			DateTimeDigitized: &fixedTime,
-		}
 	}
 	// Building payload
 	postData := &PostData{"metadata", *postAttributes}
