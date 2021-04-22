@@ -23,7 +23,7 @@ type IUpload interface {
 	GetID() int
 	GetFileIdentifier() string
 	GetBucket() string
-	GetDateTimeDigitized() time.Time
+	GetDateTimeDigitized() *string
 	GetCreatedAt() time.Time
 	GetUpdatedAt() time.Time
 	Create() error
@@ -46,7 +46,9 @@ func (u Upload) GetBucket() string {
 	return u.Bucket
 }
 func (u Upload) GetDateTimeDigitized() *string {
-	return u.DateTimeDigitized
+	s := "2019-11-06T10:21:31"
+	return &s
+	//return u.DateTimeDigitized
 }
 func (u Upload) GetCreatedAt() time.Time {
 	return u.CreatedAt
