@@ -46,9 +46,7 @@ func (u Upload) GetBucket() string {
 	return u.Bucket
 }
 func (u Upload) GetDateTimeDigitized() *string {
-	s := "2019-11-06T10:21:31"
-	return &s
-	//return u.DateTimeDigitized
+	return u.DateTimeDigitized
 }
 func (u Upload) GetCreatedAt() time.Time {
 	return u.CreatedAt
