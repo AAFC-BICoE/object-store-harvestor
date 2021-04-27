@@ -3,12 +3,14 @@ package httpclient
 import (
 	"bytes"
 	"fmt"
+	"github.com/h2non/filetype"
 	c "github.com/hashicorp/go-retryablehttp"
 	"github.com/liamylian/jsontime"
 	"harvestor/config"
 	"harvestor/db"
 	l "harvestor/logger"
 	"io"
+	"io/ioutil"
 	"mime/multipart"
 	"net/http"
 	"net/textproto"
@@ -26,9 +28,23 @@ func escapeQuotes(s string) string {
 
 // allow custom content types to be given for form files
 func CreateFormFileWithContentType(w *multipart.Writer, fieldname string, image *db.File) (io.Writer, error) {
+	// init logger
+	var logger = l.NewLogger()
+	// default value
 	contentType := "application/octet-stream"
-	if image.GetUploadType() == "derivative" {
-		contentType = "image/" + image.GetFileExtension()
+	// reading the file
+	buf, err := ioutil.ReadFile(image.GetPath())
+	// checkking for errors
+	if err != nil {
+		logger.Error("CAN NOT read "+image.GetPath()+" ||| details: ", err)
+	}
+	// getting the kind of the current file
+	kind, _ := filetype.Match(buf)
+	// if can't detect the kind
+	// using default value : "application/octet-stream"
+	if kind != filetype.Unknown {
+		logger.Debug("kind for "+image.GetPath()+" has been detected as : ", kind.MIME.Value)
+		contentType = kind.MIME.Value
 	}
 	h := make(textproto.MIMEHeader)
 	h.Set("Content-Disposition",

@@ -4,6 +4,7 @@ go 1.15
 
 require (
 	github.com/Nerzal/gocloak/v8 v8.1.1
+	github.com/h2non/filetype v1.1.1
 	github.com/hashicorp/go-retryablehttp v0.6.8
 	github.com/lestrrat-go/file-rotatelogs v2.4.0+incompatible
 	github.com/lestrrat-go/strftime v1.0.4 // indirect
