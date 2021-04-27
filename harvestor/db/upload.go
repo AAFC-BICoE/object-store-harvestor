@@ -11,7 +11,7 @@ type Upload struct {
 	FileIdentifier    string         `json:"fileIdentifier" gorm:"uniqueIndex"`
 	Bucket            string         `json:"bucket" gorm:"type:varchar(64)"`
 	Exif              datatypes.JSON `json:"exif"`
-	DateTimeDigitized time.Time      `json:"dateTimeDigitized" gorm:"default:null"`
+	DateTimeDigitized *string        `json:"dateTimeDigitized"`
 	FileID            int            `json:"file_id" sql:"not null" gorm:"unique_index:idx_upload_file"`
 	CreatedAt         time.Time      `json:"created_at"`
 	UpdatedAt         time.Time      `json:"updated_at"`
@@ -23,7 +23,7 @@ type IUpload interface {
 	GetID() int
 	GetFileIdentifier() string
 	GetBucket() string
-	GetDateTimeDigitized() time.Time
+	GetDateTimeDigitized() *string
 	GetCreatedAt() time.Time
 	GetUpdatedAt() time.Time
 	Create() error
@@ -45,7 +45,7 @@ func (u Upload) GetFileIdentifier() string {
 func (u Upload) GetBucket() string {
 	return u.Bucket
 }
-func (u Upload) GetDateTimeDigitized() time.Time {
+func (u Upload) GetDateTimeDigitized() *string {
 	return u.DateTimeDigitized
 }
 func (u Upload) GetCreatedAt() time.Time {

@@ -46,6 +46,7 @@ COPY --from=builder /go/src/harvestor/main /app/
 COPY --from=builder /go/src/harvestor/harvestor_config.yml /app/
 # For now copy the cover report to release container
 COPY --from=builder /tmp/cover.html /tmp/
+COPY --from=builder /tmp/data-test/zoneinfo.zip /tmp/zoneinfo.zip
 WORKDIR /app
 # folder for media files
 RUN mkdir /tmp/data-test
@@ -53,5 +54,7 @@ RUN mkdir /tmp/data-test
 RUN mkdir /tmp/db-test
 # folder for test logs
 RUN mkdir /tmp/log-test
+# timzones
+ENV ZONEINFO /tmp/zoneinfo.zip
 
 CMD ["./main", "/app/harvestor_config.yml"]
