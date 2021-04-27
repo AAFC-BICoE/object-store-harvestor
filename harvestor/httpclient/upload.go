@@ -2,6 +2,7 @@ package httpclient
 
 import (
 	"bytes"
+	"fmt"
 	c "github.com/hashicorp/go-retryablehttp"
 	"github.com/liamylian/jsontime"
 	"harvestor/config"
@@ -10,8 +11,32 @@ import (
 	"io"
 	"mime/multipart"
 	"net/http"
+	"net/textproto"
 	"os"
+	"strings"
 )
+
+// helper var
+var quoteEscaper = strings.NewReplacer("\\", "\\\\", `"`, "\\\"")
+
+// helper function
+func escapeQuotes(s string) string {
+	return quoteEscaper.Replace(s)
+}
+
+// allow custom content types to be given for form files
+func CreateFormFileWithContentType(w *multipart.Writer, fieldname string, image *db.File) (io.Writer, error) {
+	contentType := "application/octet-stream"
+	if image.GetUploadType() == "derivative" {
+		contentType = "image/" + image.GetFileExtension()
+	}
+	h := make(textproto.MIMEHeader)
+	h.Set("Content-Disposition",
+		fmt.Sprintf(`form-data; name="%s"; filename="%s"`,
+			escapeQuotes(fieldname), escapeQuotes(image.GetName())))
+	h.Set("Content-Type", escapeQuotes(contentType))
+	return w.CreatePart(h)
+}
 
 func uplaodImage(image *db.File) (db.Upload, error) {
 	// custom json for all time formats
@@ -38,8 +63,7 @@ func uplaodImage(image *db.File) (db.Upload, error) {
 	// New multipart writer.
 	writer := multipart.NewWriter(body)
 	// create multi part for upload
-	fw, err := writer.CreateFormFile("file", image.GetName())
-
+	fw, err := CreateFormFileWithContentType(writer, "file", image)
 	// validating on file open
 	logger.Debug("opening file : ", image.GetPath())
 	file, err := os.Open(image.GetPath())
@@ -102,7 +126,6 @@ func uplaodImage(image *db.File) (db.Upload, error) {
 		// close the body when done
 		defer resp.Body.Close()
 		// read the body
-		//b, err := ioutil.ReadAll(resp.Body)
 		b, err := io.ReadAll(resp.Body)
 		if err != nil {
 			logger.Error(" error on read body : ", err)

@@ -8,6 +8,8 @@ package db
 
 import (
 	l "harvestor/logger"
+	"path/filepath"
+	"strings"
 	"time"
 )
 
@@ -28,6 +30,7 @@ type IFile interface {
 	GetID() int
 	GetPath() string
 	GetName() string
+	GetFileExtension() string
 	GetModTime() time.Time
 	GetStatus() string
 	GetUploadType() string
@@ -46,6 +49,11 @@ func (f File) GetPath() string {
 
 func (f File) GetName() string {
 	return f.Name
+}
+
+// get file extension
+func (f File) GetFileExtension() string {
+	return strings.ToLower(strings.TrimPrefix(filepath.Ext(f.GetName()), "."))
 }
 
 func (f File) GetModTime() time.Time {
