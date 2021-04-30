@@ -27,7 +27,6 @@ func TestDbEmptyUpload(t *testing.T) {
 	assert.Nil(t, err)
 	// asserting
 	assert.Equal(t, 0, u.GetID())
-	assert.Equal(t, 0, u.GetUploadID())
 	assert.Equal(t, 0, u.GetFileID())
 	assert.Equal(t, "", u.GetFileIdentifier())
 	assert.Equal(t, "", u.GetBucket())
@@ -38,7 +37,6 @@ func TestDbCreateUpload(t *testing.T) {
 	now := time.Now()
 	u := Upload{
 		ID:                1,
-		UploadID:          1,
 		FileIdentifier:    "bd56bc1a-07d0-4e01-a95f-c96c94aa3659",
 		Bucket:            "cnc",
 		DateTimeDigitized: nil,

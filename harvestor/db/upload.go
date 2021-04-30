@@ -7,7 +7,6 @@ import (
 
 type Upload struct {
 	ID                int            `gorm:"AUTO_INCREMENT; PRIMARY_KEY"`
-	UploadID          int            `json:"id" gorm:"uniqueIndex"`
 	FileIdentifier    string         `json:"fileIdentifier" gorm:"uniqueIndex"`
 	Bucket            string         `json:"bucket" gorm:"type:varchar(64)"`
 	Exif              datatypes.JSON `json:"exif"`
@@ -32,9 +31,6 @@ type IUpload interface {
 // Implementation
 func (u Upload) GetID() int {
 	return u.ID
-}
-func (u Upload) GetUploadID() int {
-	return u.UploadID
 }
 func (u Upload) GetFileID() int {
 	return u.FileID
