@@ -1,80 +1,63 @@
 # object-store-harvestor
 
-* TODO setup git repo on https://travis-ci.org to cover a build status (it's free) and may be more repo badges
-
-One Paragraph of project description goes here
-
-
 ## Contents
-
-* TODO High level design (may be goes to a design folder)
 
 - [Object Store Harvestor](#object-store-harvestor)
   - [Docs](#docs)
-  - [Contents](#contents)
-  - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
   - [Local development](#local-development)
   - [Running the tests](#running-the-tests)
+  - [Built With](#built-with)
+  - [Artifacts](#artifacts)
+  - [Versioning](#versioning)
+  - [Deployment](#deployment)
 
 ## Docs
   - [Design](doc/design.md)
+  - [Diagram](doc/design-diagram-v0.02.pdf)
 
-## Getting Started
+## Local development
+ - `prerequisites`
+    - Install [Docker](https://docs.docker.com/get-docker/)
+    - Install [docker-compose](https://docs.docker.com/compose/)
+    - Setup [dina-local-deployment](https://github.com/AAFC-BICoE/dina-local-deployment)
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
-
-### Prerequisites
-
-- Install [Docker](https://docs.docker.com/get-docker/)
-- Install [docker-compose](https://docs.docker.com/compose/)
-
-### Local development
-
-- Clone the repo: object-store-harvestor
-- cd to repo object-store-harvestor
-- run the following command to start a docker container :
-```
-deployment-local/run_docker_containers.sh
-```
-- check the logs of the aafc-bicoe-object-store-harvestor-local conatner for results
-```
-docker logs aafc-bicoe-object-store-harvestor-local
-```
+    ##### Docer local development
+    - clone the repo: object-store-harvestor
+    - cd to repo object-store-harvestor
+    - run the following command to start a docker container :
+        ```
+        ./run_docker_containers.sh
+        ```
+    ##### local development (linux)
+    - clone the repo: object-store-harvestor
+    - cd to repo object-store-harvestor
+    - cd harvestor
+    - run the following command to start a docker container :
+        ```
+        ./develop_run.sh
+        ```
 ## Running the tests
 
-Explain how to run the automated tests for this system
+All tests run in local develoment for both docker anf Linux
+If any of the test fail the full development run will fail. All details will be provided in stdout.
 
 ### Break down into end to end tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-## Deployment
-
-Add additional notes about how to deploy this on a live system
+##### There are 2 types of tests:
+ - Unit tests (covering everything)
+ - Integration tests (covering everything except API calls, API calls are all mocked)
 
 ## Built With
 
-* TODO
+ - GitHub actions : https://github.com/AAFC-BICoE/object-store-harvestor/actions
+
+## Artifacts
+ - executable binary file
+ - config yml file
 
 ## Versioning
+ - Naming convention : vxxx.yyy (example : v0.4)
 
+## Deployment
 * TODO
 
-## Acknowledgments
-
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
