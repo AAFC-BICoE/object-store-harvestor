@@ -26,7 +26,6 @@ func TestUpload(t *testing.T) {
 	dtd := "2019-11-06T10:21:31"
 	u := db.Upload{
 		ID:                5,
-		UploadID:          55,
 		FileIdentifier:    "d64d9cdc-644b-4946-9b86-91ef820810a8",
 		Bucket:            "cnc",
 		FileID:            1,
