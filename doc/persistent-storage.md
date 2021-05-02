@@ -20,3 +20,6 @@ Please refer to this [diagram](sqlite-db-diagram-v0.01.pdf) for more details
   - Download and install [sqlitebrowser](https://sqlitebrowser.org/)
   - Open sqlitebrowser application
   - ![open sqlitebrowser](sqlitebrowser_open_db.png?raw=true "Using the menu navigate to your harvestor.db and open it")
+  - Click on Browse Data
+  - ![open sqlitebrowser](sqlitebrowser_browse_data.png?raw=true "Using the menu navigate to your harvestor.db and open it")
+  - On the left hand side choose from the Table dropdown menu a table of your interest.
