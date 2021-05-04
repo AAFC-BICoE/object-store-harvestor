@@ -19,7 +19,7 @@ Application will load yml file and use it for each application component respect
 ### maxOpenConns
 `EntryPointPath:` Physical folder path for the walker recursively traverse directories and find files of application interest
 ### maxIdleConns
-`FilesOfInterest:` comma separated list of file extentions of application interest. Example : `"yml, yaml"` or single `"yml"`
+`FilesOfInterest:` comma separated list of file extensions of application interest. Example : `"yml, yaml"` or single `"yml"`
 
 ## Httpclient
 ### timeOut
