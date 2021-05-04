@@ -13,8 +13,11 @@
   - [Deployment](#deployment)
 
 ## Docs
-  - [Design](doc/design.md)
-  - [Diagram](doc/design-diagram-v0.02.pdf)
+  - [Application Design](doc/application.md)
+  - [Application Diagram](doc/design-diagram-v0.02.pdf)
+  - [Persistent Storage Design](doc/persistent-storage.md)
+  - [Persistent Storage Diagram](doc/sqlite-db-diagram-v0.01.pdf)
+  - [Application Config](doc/application-config.md)
 
 ## Local development
  - `prerequisites`
@@ -60,4 +63,3 @@ If any of the test fail the full development run will fail. All details will be 
 
 ## Deployment
 * TODO
-
