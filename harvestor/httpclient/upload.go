@@ -9,6 +9,7 @@ import (
 	"harvestor/config"
 	"harvestor/db"
 	l "harvestor/logger"
+	"harvestor/walker"
 	"io"
 	"io/ioutil"
 	"mime/multipart"
@@ -46,10 +47,12 @@ func CreateFormFileWithContentType(w *multipart.Writer, fieldname string, image 
 		logger.Debug("kind for "+image.GetPath()+" has been detected as : ", kind.MIME.Value)
 		contentType = kind.MIME.Value
 	}
+	uploadFilename := walker.GetUploadMediaFileName(image)
+	logger.Debug("CreateFormFileWithContentType : uploadFilename : ", uploadFilename)
 	h := make(textproto.MIMEHeader)
 	h.Set("Content-Disposition",
 		fmt.Sprintf(`form-data; name="%s"; filename="%s"`,
-			escapeQuotes(fieldname), escapeQuotes(image.GetName())))
+			escapeQuotes(fieldname), escapeQuotes(uploadFilename)))
 	h.Set("Content-Type", escapeQuotes(contentType))
 	return w.CreatePart(h)
 }

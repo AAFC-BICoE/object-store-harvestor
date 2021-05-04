@@ -123,3 +123,19 @@ func GetSidecarByPath(path string) (*Sidecar, error) {
 	err := db.Where("path = ?", path).First(&s).Error
 	return &s, err
 }
+
+// look up Sidecar record in DB by Original media file
+func GetSidecarByOriginalFile(file *File) (*Sidecar, error) {
+	var s Sidecar
+	db := GetHarvesterDB()
+	err := db.Where("original_file_id = ?", file.GetID()).First(&s).Error
+	return &s, err
+}
+
+// look up Sidecar record in DB by Derivative media file
+func GetSidecarByDerivativeFile(file *File) (*Sidecar, error) {
+	var s Sidecar
+	db := GetHarvesterDB()
+	err := db.Where("derivative_file_id = ?", file.GetID()).First(&s).Error
+	return &s, err
+}

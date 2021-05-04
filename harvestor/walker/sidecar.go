@@ -20,6 +20,7 @@ type SidecarFile struct {
 	DcCreator          string
 	AcDigitizationDate string
 	Original           string
+	UploadWithFilename string
 	Derivative         string
 	ManagedAttributes  map[string]string
 }
@@ -28,6 +29,7 @@ type SidecarFile struct {
 type ISidecairFile interface {
 	GetOriginal() string
 	GetDerivative() string
+	GetUploadWithFilename() string
 }
 
 // Implementation
@@ -36,6 +38,10 @@ func (sf SidecarFile) GetOriginal() string {
 }
 func (sf SidecarFile) GetDerivative() string {
 	return sf.Derivative
+}
+
+func (sf SidecarFile) GetUploadWithFilename() string {
+	return sf.UploadWithFilename
 }
 
 func processSidecarFromWalker(path string, info os.FileInfo) error {
@@ -170,6 +176,37 @@ func GetSidecarYmlFile(sidecar *db.Sidecar) (*SidecarFile, error) {
 func GetSidecarYmlFileByFile(file *db.File) (*SidecarFile, error) {
 	path := GetSideCarPathByFilePath(file.GetPath())
 	return GetSidecarFile(path)
+}
+
+func GetUploadMediaFileName(f *db.File) string {
+	// get logger
+	var logger = l.NewLogger()
+	// check if it's original
+	if f.GetUploadType() != "original" {
+		// no need to replace
+		return f.Name
+	}
+	// get sidecar file from DB
+	s, err := db.GetSidecarByOriginalFile(f)
+	// checking errors
+	if err != nil {
+		logger.Error("Error : GetSidecarByOriginalFile : details : ", err)
+		return f.Name
+	}
+	// get content from sidecar file
+	sf, err := GetSidecarFile(s.GetPath())
+	// checking errors
+	if err != nil {
+		logger.Error("Error : GetSidecarFile : details : ", err)
+		return f.Name
+	}
+	// UploadWithFilename is optional
+	// checking if it's set
+	if len(sf.GetUploadWithFilename()) == 0 {
+		return f.Name
+	}
+
+	return sf.GetUploadWithFilename()
 }
 
 // check if we have a side card file
