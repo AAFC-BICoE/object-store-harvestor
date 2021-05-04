@@ -3,10 +3,9 @@ acMetadataCreator: d3681c90-80a3-43b7-8471-23ef718c3967
 # Use UUID for Heather Cole
 dcCreator: d3681c90-80a3-43b7-8471-23ef718c3967
 acDigitizationDate: "2019-11-06T08:44:55"
-original: sample2CR2.CR2
-uploadWithFilename: "01-01460790.cr2"
-derivative: screen_meta.jpg
+original: screen_files.png
+derivative: screen_files.png
 managedAttributes:
-  1fec3d1d-37dd-4714-a2ac-8833aac7c2a6: file01 
+  1fec3d1d-37dd-4714-a2ac-8833aac7c2a6: file00 
 tags:
   tag00
