@@ -20,6 +20,7 @@ type Upload struct {
 // Define all interfaces for this struct
 type IUpload interface {
 	GetID() int
+	GetFileID() int
 	GetFileIdentifier() string
 	GetBucket() string
 	GetDateTimeDigitized() *string

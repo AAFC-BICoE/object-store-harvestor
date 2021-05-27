@@ -21,6 +21,7 @@ type SidecarFile struct {
 	AcDigitizationDate string
 	Original           string
 	UploadWithFilename string
+	Orientation        int
 	Derivative         string
 	ManagedAttributes  map[string]string
 }
@@ -30,6 +31,7 @@ type ISidecairFile interface {
 	GetOriginal() string
 	GetDerivative() string
 	GetUploadWithFilename() string
+	GetOrientation() int
 }
 
 // Implementation
@@ -42,6 +44,15 @@ func (sf SidecarFile) GetDerivative() string {
 
 func (sf SidecarFile) GetUploadWithFilename() string {
 	return sf.UploadWithFilename
+}
+
+func (sf SidecarFile) GetOrientation() int {
+	if sf.Orientation == 0 {
+		// default value
+		// 1 = 0 degrees: the correct orientation, no adjustment is required.
+		return 1
+	}
+	return sf.Orientation
 }
 
 func processSidecarFromWalker(path string, info os.FileInfo) error {
@@ -205,8 +216,31 @@ func GetUploadMediaFileName(f *db.File) string {
 	if len(sf.GetUploadWithFilename()) == 0 {
 		return f.Name
 	}
-
 	return sf.GetUploadWithFilename()
+}
+
+func GetUploadMediaOrientation(u *db.Upload) int {
+	// get logger
+	var logger = l.NewLogger()
+	// get sidecar file from DB
+	s, err := db.GetSidecarByUpload(u)
+	// checking errors
+	if err != nil {
+		logger.Error("Error : GetSidecarByUpload : details : ", err)
+		// default value
+		// 1 = 0 degrees: the correct orientation, no adjustment is required.
+		return 1
+	}
+	// get content from sidecar file
+	sf, err := GetSidecarFile(s.GetPath())
+	// checking errors
+	if err != nil {
+		logger.Error("Error : GetSidecarFile : details : ", err)
+		// default value
+		// 1 = 0 degrees: the correct orientation, no adjustment is required.
+		return 1
+	}
+	return sf.GetOrientation()
 }
 
 // check if we have a side card file
