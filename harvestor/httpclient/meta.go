@@ -7,6 +7,7 @@ import (
 	"harvestor/config"
 	"harvestor/db"
 	l "harvestor/logger"
+	"harvestor/walker"
 	"io"
 	"net/http"
 	"time"
@@ -17,6 +18,7 @@ type PostAttributes struct {
 	FileIdentifier    string  `json:"fileIdentifier"`
 	Bucket            string  `json:"bucket"`
 	DateTimeDigitized *string `json:"acDigitizationDate"` // this is a pointer, since we need to support Null value in json
+	Orientation       int     `json:"orientation"`
 }
 type PostData struct {
 	Type           string         `json:"type"`
@@ -48,11 +50,14 @@ func postMeta(upload *db.Upload) (db.Meta, error) {
 	// define full resource URL
 	url := conf.HttpClient.GetBaseApiUrl() + conf.HttpClient.GetMetaUri()
 	logger.Debug("post meta url : ", url)
+	orientation := walker.GetUploadMediaOrientation(upload)
+	logger.Debug("sidecar orientation : ", orientation)
 	// checking if the GetDateTimeDigitized is actually zero
 	postAttributes := &PostAttributes{
 		FileIdentifier:    upload.GetFileIdentifier(),
 		Bucket:            upload.GetBucket(),
 		DateTimeDigitized: upload.GetDateTimeDigitized(),
+		Orientation:       orientation,
 	}
 	if upload.GetDateTimeDigitized() != nil {
 		layout := "2006-01-02T15:04:05"
@@ -71,13 +76,14 @@ func postMeta(upload *db.Upload) (db.Meta, error) {
 			FileIdentifier:    upload.GetFileIdentifier(),
 			Bucket:            upload.GetBucket(),
 			DateTimeDigitized: &fixedTime,
+			Orientation:       orientation,
 		}
 	}
 	// Building payload
 	postData := &PostData{"metadata", *postAttributes}
 	postMeta := &PostMeta{*postData}
 	payload, err := json.Marshal(*postMeta)
-	logger.Debug(" post meta payload : ", string(payload))
+	logger.Info(" post meta payload : ", string(payload))
 	if err != nil {
 		logger.Error(" json.Marshal fail details :", err)
 		return meta, err
