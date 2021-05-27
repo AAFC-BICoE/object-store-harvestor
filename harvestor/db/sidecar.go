@@ -139,3 +139,11 @@ func GetSidecarByDerivativeFile(file *File) (*Sidecar, error) {
 	err := db.Where("derivative_file_id = ?", file.GetID()).First(&s).Error
 	return &s, err
 }
+
+// look up Sidecar record in DB by Upload file
+func GetSidecarByUpload(upload *Upload) (*Sidecar, error) {
+	var s Sidecar
+	db := GetHarvesterDB()
+	err := db.Where("original_file_id = ?", upload.GetFileID()).First(&s).Error
+	return &s, err
+}
