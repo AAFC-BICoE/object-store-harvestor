@@ -8,7 +8,7 @@ uploadWithFilename: "01-01460790.cr2"
 orientation: 8
 derivative: screen_meta.jpg
 managedAttributes:
-  1fec3d1d-37dd-4714-a2ac-8833aac7c2a6: file01 
-  1fec3d1d-37dd-4714-a2ac-8833aac7c2a7: file02 
+  managed_attribute_key_0: file00 
+  managed_attribute_key_1: file01 
 tags:
   tag00
