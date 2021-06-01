@@ -48,14 +48,8 @@ func TestSidecarManagedMeta(t *testing.T) {
 	// file path
 	filePath := "/tmp/data-test/images/2021/03/07/screen_meta.yml"
 	// init an empty slice of stucked files
-	s, err := db.GetSidecarByPath(filePath)
+	_, err = db.GetSidecarByPath(filePath)
 	// checking errors
-	assert.Nil(t, err)
-	// init http client
-	InitHttpClient()
-	// testing upload against mock server
-	err = postSideCarManagedMeta(s)
-	// asserting
 	assert.Nil(t, err)
 }
 

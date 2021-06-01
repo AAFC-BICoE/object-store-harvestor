@@ -34,8 +34,8 @@ Please refer to this [diagram](design-diagram-v0.02.pdf)
   - Orchestrator starts Http Client process
   - Http client connects to DB via DB client and upload all 'new' files one by one to related buckets ('original' & 'derivatives') and stores all responses to DB via DB client 
   - Http client posts metadata only for each 'original' uploaded file and stores all responses to DB via DB client
+    - http client posts managed metadata in metada post as well from sidecar
   - Http client via DB client pull all new sidecar files to build relationships: 
-    - http client posts managed metadata relationship for each new sidecar based on the response data from DB from previous calls
     - http client posts derivative relationship for each new sidecar based on the response data from DB from previous calls
 
 # An example with expectations from API server (Phase 1)
@@ -47,5 +47,4 @@ Please refer to this [diagram](design-diagram-v0.02.pdf)
     Upload cr2 file /api/v1/file/{bucket}, record the returned id (file1)
     Upload jpeg file to /api/v1/file/{bucket}/derivative, record the returned id (file2)
     Create metadata resource (api/v1/metadata) and set fileIdentifier to file1, record the returned id (metadata1)
-    Send managed attributes for metadata1
     Create derivative resource (/api/v1/derivative), set fileIdentifier to file2 and acDerivedFrom to metadata1

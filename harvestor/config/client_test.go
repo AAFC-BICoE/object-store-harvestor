@@ -64,14 +64,6 @@ func TestGetMetaUri(t *testing.T) {
 	assert.Equal(t, want, conf.HttpClient.GetMetaUri())
 }
 
-func TestGetManagedMetaUri(t *testing.T) {
-	var file = "../harvestor_config.yml"
-	Load(file)
-	conf := GetConf()
-	want := "/api/v1/managed-attribute-map"
-	assert.Equal(t, want, conf.HttpClient.GetManagedMetaUri())
-}
-
 func TestGetDerivativeUri(t *testing.T) {
 	var file = "../harvestor_config.yml"
 	Load(file)

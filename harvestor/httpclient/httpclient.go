@@ -74,9 +74,9 @@ func processNewRelations() {
 
 // process singe sidecar file
 func processNewSidecar(sidecar *db.Sidecar) {
-	if processSideCarManagedMeta(sidecar) == nil {
-		_ = processSideCarDerivative(sidecar)
-	}
+	// no longer we need managed meta here
+	// just post derivatives
+	_ = processSideCarDerivative(sidecar)
 }
 
 // A wrapper to loop all new files
@@ -97,16 +97,6 @@ func processNewFiles() {
 		processNewFile(&file)
 		logger.Info("= = = = = E2E is DONE for current file : ", file.GetName(), " = = = = =")
 	}
-}
-
-// Support for sidecar yml files to post managed metadata
-func processSideCarManagedMeta(sidecar *db.Sidecar) error {
-	err := postSideCarManagedMeta(sidecar)
-	if err == nil {
-		db.SetSidecarStatus(sidecar, "managed-meta")
-	}
-	return err
-
 }
 
 // Support for sidecar yml files to post derivatives

@@ -243,6 +243,27 @@ func GetUploadMediaOrientation(u *db.Upload) int {
 	return sf.GetOrientation()
 }
 
+// Getting content of the sidecar by upload file
+func GetSidecariFileByUpload(u *db.Upload) (*SidecarFile, error) {
+	// get logger
+	var logger = l.NewLogger()
+	// get sidecar file from DB
+	s, err := db.GetSidecarByUpload(u)
+	// checking errors
+	if err != nil {
+		logger.Error("Error : db.GetSidecarByUpload : details : ", err)
+		return nil, err
+	}
+	// get content from sidecar file
+	sf, err := GetSidecarFile(s.GetPath())
+	// checking errors
+	if err != nil {
+		logger.Error("Error : GetSidecarFile : details : ", err)
+		return nil, err
+	}
+	return sf, err
+}
+
 // check if we have a side card file
 func HasSideCar(path string) bool {
 	// init logger
