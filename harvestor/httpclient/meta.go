@@ -14,11 +14,15 @@ import (
 )
 
 // structs for http POST
+type ManagedAttributes struct {
+	ManagedAttributeKey string `json:"managed_attribute_key"`
+}
 type PostAttributes struct {
-	FileIdentifier    string  `json:"fileIdentifier"`
-	Bucket            string  `json:"bucket"`
-	DateTimeDigitized *string `json:"acDigitizationDate"` // this is a pointer, since we need to support Null value in json
-	Orientation       int     `json:"orientation"`
+	FileIdentifier         string            `json:"fileIdentifier"`
+	Bucket                 string            `json:"bucket"`
+	DateTimeDigitized      *string           `json:"acDigitizationDate"` // this is a pointer, since we need to support Null value in json
+	Orientation            int               `json:"orientation"`
+	ManagedAttributeValues map[string]string `json:"managedAttributeValues"`
 }
 type PostData struct {
 	Type           string         `json:"type"`
@@ -52,12 +56,31 @@ func postMeta(upload *db.Upload) (db.Meta, error) {
 	logger.Debug("post meta url : ", url)
 	orientation := walker.GetUploadMediaOrientation(upload)
 	logger.Debug("sidecar orientation : ", orientation)
+
+	scf, err := walker.GetSidecariFileByUpload(upload)
+	if err != nil {
+		logger.Error("GetSidecariFileByUpload :", err)
+	}
+
+	// prepare ManagedAttributes for meta
+	// init map
+	var managedAttributes map[string]string
+	// make map
+	managedAttributes = make(map[string]string)
+	// populate map
+	if scf != nil {
+		for key, value := range scf.ManagedAttributes {
+			managedAttributes[key] = value
+		}
+	}
+
 	// checking if the GetDateTimeDigitized is actually zero
 	postAttributes := &PostAttributes{
-		FileIdentifier:    upload.GetFileIdentifier(),
-		Bucket:            upload.GetBucket(),
-		DateTimeDigitized: upload.GetDateTimeDigitized(),
-		Orientation:       orientation,
+		FileIdentifier:         upload.GetFileIdentifier(),
+		Bucket:                 upload.GetBucket(),
+		DateTimeDigitized:      upload.GetDateTimeDigitized(),
+		Orientation:            orientation,
+		ManagedAttributeValues: managedAttributes,
 	}
 	if upload.GetDateTimeDigitized() != nil {
 		layout := "2006-01-02T15:04:05"
@@ -73,17 +96,18 @@ func postMeta(upload *db.Upload) (db.Meta, error) {
 		fixedTime := t.Format(time.RFC3339)
 		logger.Debug(" Fixed DateTimeDigitized :", fixedTime)
 		postAttributes = &PostAttributes{
-			FileIdentifier:    upload.GetFileIdentifier(),
-			Bucket:            upload.GetBucket(),
-			DateTimeDigitized: &fixedTime,
-			Orientation:       orientation,
+			FileIdentifier:         upload.GetFileIdentifier(),
+			Bucket:                 upload.GetBucket(),
+			DateTimeDigitized:      &fixedTime,
+			Orientation:            orientation,
+			ManagedAttributeValues: managedAttributes,
 		}
 	}
 	// Building payload
 	postData := &PostData{"metadata", *postAttributes}
 	postMeta := &PostMeta{*postData}
 	payload, err := json.Marshal(*postMeta)
-	logger.Info(" post meta payload : ", string(payload))
+	logger.Debug(" post meta payload : ", string(payload))
 	if err != nil {
 		logger.Error(" json.Marshal fail details :", err)
 		return meta, err

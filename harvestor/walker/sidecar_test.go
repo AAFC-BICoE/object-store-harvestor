@@ -2,8 +2,6 @@ package walker
 
 import (
 	"github.com/stretchr/testify/assert"
-	_ "harvestor/config"
-	_ "harvestor/db"
 	"testing"
 )
 
