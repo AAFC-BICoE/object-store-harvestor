@@ -211,7 +211,7 @@ func getDerivativePostData(upload *db.Upload, meta *db.Meta) *PostSidecarDerivat
 	postAttributes := &PostSidecarDerivativeAttributes{
 		"LARGE_IMAGE",
 		"Image",
-		"cnc",
+		upload.GetBucket(),
 		upload.GetFileIdentifier(),
 	}
 
