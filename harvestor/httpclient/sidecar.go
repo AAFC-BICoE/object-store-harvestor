@@ -27,6 +27,7 @@ type PostSidecarAttributes struct {
 type PostSidecarDerivativeAttributes struct {
 	DerivativeType string `json:"derivativeType"`
 	DcType         string `json:"dcType"`
+	Bucket         string `json:"bucket"`
 	FileIdentifier string `json:"fileIdentifier"`
 }
 
@@ -210,6 +211,7 @@ func getDerivativePostData(upload *db.Upload, meta *db.Meta) *PostSidecarDerivat
 	postAttributes := &PostSidecarDerivativeAttributes{
 		"LARGE_IMAGE",
 		"Image",
+		"cnc",
 		upload.GetFileIdentifier(),
 	}
 
