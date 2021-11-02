@@ -22,6 +22,7 @@ type PostAttributes struct {
 	Bucket                 string            `json:"bucket"`
 	DateTimeDigitized      *string           `json:"acDigitizationDate"` // this is a pointer, since we need to support Null value in json
 	Orientation            int               `json:"orientation"`
+	DcRights               string            `json:"dcRights"`
 	ManagedAttributeValues map[string]string `json:"managedAttributeValues"`
 }
 type PostData struct {
@@ -80,6 +81,7 @@ func postMeta(upload *db.Upload) (db.Meta, error) {
 		Bucket:                 upload.GetBucket(),
 		DateTimeDigitized:      upload.GetDateTimeDigitized(),
 		Orientation:            orientation,
+		DcRights:               conf.App.GetDcRights(),
 		ManagedAttributeValues: managedAttributes,
 	}
 	if upload.GetDateTimeDigitized() != nil {

@@ -10,6 +10,7 @@ type AppConfiguration struct {
 	Name           string // not used yet
 	Env            string // For now used to define cluster vs PC
 	ObjectTimezone string // EXIF does not provide timezone information so the following timezone will be used for the objects uploaded by the harvestor
+	DcRights       string // metadata copy rights
 }
 
 // Define all interfaces for this struct
@@ -18,6 +19,7 @@ type IAppConfiguration interface {
 	GetName() string
 	GetEnvironment() string
 	GetObjectTimezone() string
+	GetDcRights() string
 }
 
 // Implementation
@@ -35,4 +37,8 @@ func (a AppConfiguration) GetEnvironment() string {
 
 func (a AppConfiguration) GetObjectTimezone() string {
 	return a.ObjectTimezone
+}
+
+func (a AppConfiguration) GetDcRights() string {
+	return a.DcRights
 }
