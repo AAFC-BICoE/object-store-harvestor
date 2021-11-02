@@ -25,6 +25,7 @@ httpclient:
   meta: "/api/v1/metadata"
   derivative: "/api/v1/derivative"
 
+
 keycloak:
   # !!! Important !!!
   # Please read all comments in httpclient/keycloak.go before running
@@ -56,3 +57,4 @@ app:
   env: "cluster"
   # EXIF does not provide timezone information so the following timezone will be used for the objects uploaded by the harvestor
   objectTimezone: "America/New_York"
+  dcRights: "©Her Majesty The Queen in Right of Canada, as represented by the Minister of Agriculture and Agri-Food | © Sa Majesté la Reine du chef du Canada, représentée par le ministre de l’Agriculture et de l’Agroalimentaire"

@@ -7,7 +7,7 @@ set -e
 # Validation
 # This is a guard to prevent running incorrect golang versions
 ###############################################################
-required_golang="1.16"
+required_golang="1.17"
 v=`go version | { read _ _ v _; echo ${v#go}; }`
 if [[ $v =~ $required_golang ]]; then
    echo "go version is good and is : $v"
