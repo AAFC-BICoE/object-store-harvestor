@@ -2,8 +2,8 @@ package httpclient
 
 import (
 	"bytes"
+	"encoding/json"
 	c "github.com/hashicorp/go-retryablehttp"
-	"github.com/liamylian/jsontime"
 	"harvestor/config"
 	"harvestor/db"
 	l "harvestor/logger"
@@ -23,7 +23,7 @@ type PostAttributes struct {
 	DateTimeDigitized      *string           `json:"acDigitizationDate"` // this is a pointer, since we need to support Null value in json
 	Orientation            int               `json:"orientation"`
 	DcRights               string            `json:"dcRights"`
-	ManagedAttributeValues map[string]string `json:"managedAttributeValues"`
+	ManagedAttributeValues map[string]string `json:"managedAttributes"`
 }
 type PostData struct {
 	Type           string         `json:"type"`
@@ -44,7 +44,7 @@ type ResponseMeta struct {
 
 func postMeta(upload *db.Upload) (db.Meta, error) {
 	// custom json for all time formats
-	var json = jsontime.ConfigWithCustomTimeFormat
+	//var json = jsontime.ConfigWithCustomTimeFormat
 	// init logger
 	var logger = l.NewLogger()
 	// init conf
