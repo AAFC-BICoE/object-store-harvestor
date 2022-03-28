@@ -6,6 +6,7 @@ require (
 	github.com/Nerzal/gocloak/v8 v8.1.1
 	github.com/h2non/filetype v1.1.1
 	github.com/hashicorp/go-retryablehttp v0.6.8
+	github.com/json-iterator/go v1.1.9 // indirect
 	github.com/lestrrat-go/file-rotatelogs v2.4.0+incompatible
 	github.com/lestrrat-go/strftime v1.0.4 // indirect
 	github.com/liamylian/jsontime v1.0.1
@@ -15,6 +16,7 @@ require (
 	github.com/sirupsen/logrus v1.7.0
 	github.com/spf13/viper v1.7.1
 	github.com/stretchr/testify v1.6.1
+	golang.org/x/sys v0.0.0-20220328115105-d36c6a25d886 // indirect
 	gorm.io/datatypes v1.0.0
 	gorm.io/driver/sqlite v1.1.4
 	gorm.io/gorm v1.20.12
