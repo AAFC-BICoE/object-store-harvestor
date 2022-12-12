@@ -15,6 +15,7 @@ type HttpClientConfiguration struct {
 	UploadGroup        string // Upload Group
 	Meta               string // Meta API resource
 	Derivative         string // Derivative API resource
+	AllowInsecureSkipVerify bool // Allow to skip tls certificate validation
 }
 
 // Define all interfaces for this struct
@@ -28,6 +29,7 @@ type IHttpClientConfiguration interface {
 	GetUploadGroup() string
 	GetMetaUri() string
 	GetDerivativeUri() string
+	GetAllowInsecureSkipVerify() bool
 }
 
 // Implementation
@@ -65,4 +67,8 @@ func (h HttpClientConfiguration) GetMetaUri() string {
 
 func (h HttpClientConfiguration) GetDerivativeUri() string {
 	return h.Derivative
+}
+
+func (h HttpClientConfiguration) GetAllowInsecureSkipVerify() bool {
+	return h.AllowInsecureSkipVerify
 }

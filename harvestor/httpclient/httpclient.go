@@ -6,13 +6,25 @@ import (
 	"harvestor/db"
 	l "harvestor/logger"
 	"time"
+	"crypto/tls"
+	"net/http"
 )
 
 var httpClient *c.Client
 
 func InitHttpClient() {
-	httpClient = c.NewClient()
+
 	conf := config.GetConf()
+	httpClient = c.NewClient()
+
+	// depending on the config, allow custom tls configuration to skip verify
+	if conf.HttpClient.GetAllowInsecureSkipVerify() {
+		tr := &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		}
+		httpClient.HTTPClient.Transport = tr
+	}
+
 	// set max retry in case server fails to process a request
 	httpClient.RetryMax = conf.HttpClient.GetRetryMax()
 	// set wait in seconds before makeing the same request after server fails

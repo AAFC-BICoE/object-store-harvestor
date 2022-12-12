@@ -34,6 +34,13 @@ func TestGetMaxIdleConnections(t *testing.T) {
 	assert.Regexp(t, regexp.MustCompile(`^[0-9]{1,2}$`), conf.HttpClient.GetMaxIdleConnections())
 }
 
+func TestGetAllowInsecureSkipVerify(t *testing.T) {
+	var file = "../harvestor_config.yml"
+	Load(file)
+	conf := GetConf()
+	assert.Equal(t, false, conf.HttpClient.GetAllowInsecureSkipVerify())
+}
+
 func TestGetBaseApiUrl(t *testing.T) {
 	var file = "../harvestor_config.yml"
 	Load(file)

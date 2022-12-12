@@ -19,6 +19,7 @@ httpclient:
   maxIdleConnections: 10 
   RetryMax: 2 # how many times to retry
   RetryWaitMin: 3 # how many seconds to wait for retry
+  AllowInsecureSkipVerify: false # allow to skip tls verification. Mostly for local development. 
   baseApiUrl: "http://localhost:8081"
   upload: "/api/v1/file"
   uploadGroup: "cnc"
