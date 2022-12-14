@@ -15,6 +15,7 @@ type HttpClientConfiguration struct {
 	UploadGroup        string // Upload Group
 	Meta               string // Meta API resource
 	Derivative         string // Derivative API resource
+	LocalCertFile string // Allow to specify a "local" certificate. Local means a certificate that is not already in host-trusted CAs.
 }
 
 // Define all interfaces for this struct
@@ -28,6 +29,7 @@ type IHttpClientConfiguration interface {
 	GetUploadGroup() string
 	GetMetaUri() string
 	GetDerivativeUri() string
+	GetLocalCertFile() string
 }
 
 // Implementation
@@ -65,4 +67,8 @@ func (h HttpClientConfiguration) GetMetaUri() string {
 
 func (h HttpClientConfiguration) GetDerivativeUri() string {
 	return h.Derivative
+}
+
+func (h HttpClientConfiguration) GetLocalCertFile() string {
+	return h.LocalCertFile
 }

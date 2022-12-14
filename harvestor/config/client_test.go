@@ -1,9 +1,10 @@
 package config
 
 import (
-	"github.com/stretchr/testify/assert"
 	"regexp"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestGetTimeOut(t *testing.T) {
@@ -32,6 +33,14 @@ func TestGetMaxIdleConnections(t *testing.T) {
 	Load(file)
 	conf := GetConf()
 	assert.Regexp(t, regexp.MustCompile(`^[0-9]{1,2}$`), conf.HttpClient.GetMaxIdleConnections())
+}
+
+func TestGetLocalCertFile(t *testing.T) {
+	var file = "../harvestor_config.yml"
+	Load(file)
+	conf := GetConf()
+	// this is optional
+	assert.Equal(t, "", conf.HttpClient.GetLocalCertFile())
 }
 
 func TestGetBaseApiUrl(t *testing.T) {

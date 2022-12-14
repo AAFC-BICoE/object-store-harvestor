@@ -19,6 +19,7 @@ httpclient:
   maxIdleConnections: 10 
   RetryMax: 2 # how many times to retry
   RetryWaitMin: 3 # how many seconds to wait for retry
+  # LocalCertFile: # certificate file (.crt) to append to the host-CAs for the harvestor
   baseApiUrl: "http://localhost:8081"
   upload: "/api/v1/file"
   uploadGroup: "cnc"

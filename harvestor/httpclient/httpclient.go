@@ -1,30 +1,75 @@
 package httpclient
 
 import (
-	c "github.com/hashicorp/go-retryablehttp"
+	"crypto/tls"
+	"crypto/x509"
 	"harvestor/config"
 	"harvestor/db"
 	l "harvestor/logger"
+	"io/ioutil"
+	"net/http"
 	"time"
+
+	c "github.com/hashicorp/go-retryablehttp"
 )
 
 var httpClient *c.Client
 
 func InitHttpClient() {
-	httpClient = c.NewClient()
+
+	// Getting logger
+	logger := l.NewLogger()
+
 	conf := config.GetConf()
+	httpClient = c.NewClient()
+
+	// depending on the config, allow to append custom certificate
+	// inspired by https://forfuncsake.github.io/post/2017/08/trust-extra-ca-cert-in-go-app/
+	if conf.HttpClient.GetLocalCertFile() != "" {
+		tlsConfig, err := InstallLocalCA(conf.HttpClient.GetLocalCertFile(), logger)
+		if err != nil {
+			logger.Error("Can't setup LocalCA: ", err, " ... Continuing without it.")
+		}
+
+		defaultTransport := httpClient.HTTPClient.Transport
+		defaultTransport.(*http.Transport).TLSClientConfig = tlsConfig
+	}
+
 	// set max retry in case server fails to process a request
 	httpClient.RetryMax = conf.HttpClient.GetRetryMax()
 	// set wait in seconds before makeing the same request after server fails
 	httpClient.RetryWaitMin = time.Duration(conf.HttpClient.GetRetryWaitMin()) * time.Second
 	// set timeout in seconds after which http client should give up
 	httpClient.HTTPClient.Timeout = time.Duration(conf.HttpClient.GetTimeOut()) * time.Second
-	// Getting logger
-	logger := l.NewLogger()
+
 	// Assign our custom logger to http client logger
 	httpClient.Logger = logger
 	// we are good here
 	logger.Info("Harvestor Http Client has been initialized !!!")
+}
+
+func InstallLocalCA(localCertFile string, logger *l.StandardLogger) (*tls.Config, error) {
+	// Get the SystemCertPool if available otherwise create a new one
+	rootCAs, _ := x509.SystemCertPool()
+	if rootCAs == nil {
+		rootCAs = x509.NewCertPool()
+	}
+
+	// Read in the cert file
+	certs, err := ioutil.ReadFile(localCertFile)
+	if err != nil {
+		return nil, err
+	}
+
+	// Append the cert to the SystemCertPool
+	if ok := rootCAs.AppendCertsFromPEM(certs); !ok {
+		logger.Println("No certs appended, using system certs only")
+	}
+
+	// Create a new tls.Config with our augmented rootCAs
+	return &tls.Config{
+		RootCAs: rootCAs,
+	}, nil
 }
 
 // http client for Bio Cluster
