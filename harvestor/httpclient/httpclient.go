@@ -23,7 +23,7 @@ func InitHttpClient() {
 	conf := config.GetConf()
 	httpClient = c.NewClient()
 
-	// depending on the config, allow custom CA tls configuration
+	// depending on the config, allow to append custom certificate
 	// inspired by https://forfuncsake.github.io/post/2017/08/trust-extra-ca-cert-in-go-app/
 	if conf.HttpClient.GetLocalCertFile() != "" {
 		tlsConfig, err := InstallLocalCA(conf.HttpClient.GetLocalCertFile(), logger)
@@ -49,7 +49,7 @@ func InitHttpClient() {
 }
 
 func InstallLocalCA(localCertFile string, logger *l.StandardLogger) (*tls.Config, error) {
-	// Get the SystemCertPool, continue with an empty pool on error
+	// Get the SystemCertPool if available otherwise create a new one
 	rootCAs, _ := x509.SystemCertPool()
 	if rootCAs == nil {
 		rootCAs = x509.NewCertPool()
@@ -61,12 +61,12 @@ func InstallLocalCA(localCertFile string, logger *l.StandardLogger) (*tls.Config
 		return nil, err
 	}
 
-	// Append our cert to the system pool
+	// Append the cert to the SystemCertPool
 	if ok := rootCAs.AppendCertsFromPEM(certs); !ok {
 		logger.Println("No certs appended, using system certs only")
 	}
 
-	// Trust the augmented cert pool in our client
+	// Create a new tls.Config with our augmented rootCAs
 	return &tls.Config{
 		RootCAs: rootCAs,
 	}, nil
