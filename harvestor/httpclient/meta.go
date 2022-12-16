@@ -3,7 +3,6 @@ package httpclient
 import (
 	"bytes"
 	"encoding/json"
-	c "github.com/hashicorp/go-retryablehttp"
 	"harvestor/config"
 	"harvestor/db"
 	l "harvestor/logger"
@@ -11,12 +10,11 @@ import (
 	"io"
 	"net/http"
 	"time"
+
+	c "github.com/hashicorp/go-retryablehttp"
 )
 
 // structs for http POST
-type ManagedAttributes struct {
-	ManagedAttributeKey string `json:"managed_attribute_key"`
-}
 type PostAttributes struct {
 	FileIdentifier         string            `json:"fileIdentifier"`
 	Bucket                 string            `json:"bucket"`
@@ -25,10 +23,22 @@ type PostAttributes struct {
 	DcRights               string            `json:"dcRights"`
 	ManagedAttributeValues map[string]string `json:"managedAttributes"`
 }
+
 type PostData struct {
-	Type           string         `json:"type"`
-	PostAttributes PostAttributes `json:"attributes"`
+	Type           string                       `json:"type"`
+	PostAttributes PostAttributes               `json:"attributes"`
+	Relationships  map[string]JSONAPIDataSingle `json:"relationships"`
 }
+
+type JSONAPIDataSingle struct {
+	JSONAPIRelationshipData JSONAPIRelationshipData `json:"data"`
+}
+
+type JSONAPIRelationshipData struct {
+	ID   string `json:"id"`
+	Type string `json:"type"`
+}
+
 type PostMeta struct {
 	PostData PostData `json:"data"`
 }
@@ -64,14 +74,22 @@ func postMeta(upload *db.Upload) (db.Meta, error) {
 	}
 
 	// prepare ManagedAttributes for meta
-	// init map
-	var managedAttributes map[string]string
-	// make map
-	managedAttributes = make(map[string]string)
+	managedAttributes := make(map[string]string)
 	// populate map
 	if scf != nil {
 		for key, value := range scf.ManagedAttributes {
 			managedAttributes[key] = value
+		}
+	}
+
+	//setup agent relationships
+	metadataRelationships := make(map[string]JSONAPIDataSingle)
+	if scf != nil {
+		if scf.AcMetadataCreator != "" {
+			metadataRelationships["acMetadataCreator"] = JSONAPIDataSingle{JSONAPIRelationshipData(JSONAPIRelationshipData{scf.AcMetadataCreator, "person"})}
+		}
+		if scf.DcCreator != "" {
+			metadataRelationships["dcCreator"] = JSONAPIDataSingle{JSONAPIRelationshipData(JSONAPIRelationshipData{scf.DcCreator, "person"})}
 		}
 	}
 
@@ -105,8 +123,10 @@ func postMeta(upload *db.Upload) (db.Meta, error) {
 			ManagedAttributeValues: managedAttributes,
 		}
 	}
+
 	// Building payload
-	postData := &PostData{"metadata", *postAttributes}
+	postData := &PostData{"metadata", *postAttributes, metadataRelationships}
+
 	postMeta := &PostMeta{*postData}
 	payload, err := json.Marshal(*postMeta)
 	logger.Debug(" post meta payload : ", string(payload))
