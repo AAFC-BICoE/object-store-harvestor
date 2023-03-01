@@ -35,8 +35,8 @@ func createFileRecord(filePath string, uploadType string) (*db.File, error) {
 	file.UploadType = uploadType
 	logger.Debug("file db record for file : ", logger.PrettyGoStruct(file))
 	if db.DoesFileExist(file.GetPath()) {
-		logger.Debug("file exist, do nothing for : ", file.GetPath())
-		return &file, nil
+		logger.Debug("file exist, returning DB record for : ", file.GetPath())
+		return db.GetFileByPath(filePath)
 	}
 	return &file, db.CreateFile(&file)
 }
